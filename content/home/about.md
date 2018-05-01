@@ -54,5 +54,5 @@ data science meetup in the Washington DC area and spawned several other meetups 
 Data Community DC organization, that today boasts over 15000 members. He served on the Board of 
 Data Community DC for several years. Dr. Dasgupta has also conducted well-regarded workshops, continuing
 education courses and corporate trainings on data science areas, including R and Python, machine learning
-and best data analytic practices. He teaches in and is co-chair of the Bioinformatics and Data Science 
+and best data analytic practices, often in partnership with [District Data Labs](https://www.districtdatalabs.com/). He teaches in and is co-chair of the Bioinformatics and Data Science 
 Department of the [FAES Graduate School at NIH](https://faes.org/content/graduate-school). 
