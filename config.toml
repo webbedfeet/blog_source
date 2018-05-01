@@ -6,7 +6,7 @@
 baseurl = "/"
 
 # Title of your site
-title = "StatBandit's Lair"
+title = "Abhijit Dasgupta"
 
 # Your copyright notice - appears in site footer.
 # To display a copyright symbol, type `&copy;`.
@@ -50,7 +50,7 @@ enableGitInfo = false
 [params]
   # Color theme.
   #   Choose from `default`, `ocean`, `forest`, `coffee`, `dark`, or `1950s`.
-  color_theme = "ocean"
+  color_theme = "dark"
 
   # Font style.
   #   Choose from `default`, `classic`, or `playfair`.
@@ -67,7 +67,7 @@ enableGitInfo = false
   gravatar = false  # Get your avatar from Gravatar.com? (true/false)
   avatar = "Abhijit_Headshot1.jpeg"  # Specify an avatar image (in `static/img/` folder) or delete value to disable avatar.
   email = "adasgupta@araastat.com"
-  address = "12410 Milestone Manor Ln, Germantown, Maryland, USA"
+  address = "Germantown, Maryland, USA"
   office_hours = ""
   phone = "240 813 8458"
   skype = "abhijit.dasgupta"
