@@ -15,3 +15,11 @@ image = ""
 caption = ""
 +++
 My personal musings on data science, statistics, and solving problems using R and Python
+
+### Blog Roll
+
++ [R-bloggers](https://www.r-bloggers.com)
++ [Andrew Gelman's Blog](http://andrewgelman.com/)
++ [RStudio R Views](https://rviews.rstudio.com/)
+
+### Posts
