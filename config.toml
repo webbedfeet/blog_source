@@ -257,6 +257,11 @@ enableGitInfo = false
     icon_pack = "fa"
     link = "https://www.linkedin.com/in/abhijit-dasgupta-70197713/"
 
+  [[params.social]]
+    icon = "cv"
+    icon_pack = "ai"
+    link = "https://www.dropbox.com/s/plgnlmlpl8zn4d5/CV.pdf?dl=0"
+
 
 # Navigation Links
 #   To link a homepage widget, specify the URL as a hash `#` followed by the filename of the
