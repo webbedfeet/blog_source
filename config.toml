@@ -22,7 +22,7 @@ relativeurls=true
 
 publishDir = "../webbedfeet.github.io"
 # Enable comments by entering your Disqus shortname
-disqusShortname = ""
+disqusShortname = "statbandit"
 
 # Enable analytics by entering your Google Analytics tracking ID
 googleAnalytics = ""
@@ -255,13 +255,12 @@ enableGitInfo = false
   [[params.social]]
     icon = "linkedin"
     icon_pack = "fa"
-    link = "https://www.linkedin.com/in/abhijit-dasgupta-70197713/"
+    link = "//linkedin.com/in/abhijit-dasgupta-70197713/"
 
   [[params.social]]
     icon = "cv"
     icon_pack = "ai"
-    link = "https://www.dropbox.com/s/plgnlmlpl8zn4d5/CV.pdf?dl=0"
-
+    link = "//dropbox.com/s/plgnlmlpl8zn4d5/CV.pdf?dl=0"
 
 # Navigation Links
 #   To link a homepage widget, specify the URL as a hash `#` followed by the filename of the
