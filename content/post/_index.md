@@ -14,3 +14,4 @@ list_format = 0
 image = ""
 caption = ""
 +++
+My personal musings on data science, statistics, and solving problems using R and Python
