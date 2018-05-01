@@ -44,7 +44,7 @@ data science.
 Dr. Dasgupta has applied his skills in a wide variety of domains. The majority of his work has been
 in biomedical research, but he has also contributed to the development of wearable health technologies
 through [Zansors](http://www.zansors.com), a Virgnia-based health technology startup. He has also consulted and collaborated
-in business analytics, signal processings, operations research and clinical trials. Over the years
+in business analytics, signal processing, operations research and clinical trials. Over the years
 Dr Dasgupta has collaborated on and successfully won several competitive grants from the NIH, including 6 SBIR/STTR grants. He also serves as a reviewer for both the National Institute of Mental Health's Data
 Safety Monitoring Boards and the Center for Scientific Review of the NIH. 
 
