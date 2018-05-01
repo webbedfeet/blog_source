@@ -13,4 +13,20 @@ header:
 draft: true
 ---
 
-Two R package
+
+
+I think that generally, we are all too familiar with poorly formatted Excel files, which apparently are visually organized to the creator but drive a computer to fits. . We all want to collect data, but it seems almost noone is trained in **how** to collect and store data. Apparently since everyone has seen spreadsheets, it *should* be intuitive, or at least that's how it often seems. Even in my statistics training, the lesson of how to store data to make it easier to use was never really a lesson taught but rather a lesson learned through collaboration, often imperfectly. The impact of Hadley's ["Tidy Data"](https://vita.had.co.nz/papers/tidy-data.pdf) was immeasurable in bringing clear structure  to storing data to make them more computer-friendly. Other strategies are of course possible for particular situations, but on the whole, the principle of tidy data makes things better more often than not. 
+
+Despite my fervent wish that my collaborators get basic training in "how to store data", that alas hasn't come to pass. So often I'm stuck with data that is visually organized (to varying degrees) but almost impossible to use computationally. 
+
+Two R packages have repeatedly come to my rescue for cleaning messy data supplied as Excel files: [`tidyxl`](https://github.com/nacnudus/tidyxl) by Duncan Garmonsway, and [`janitor`](https://github.com/sfirke/janitor) by Sam Firke. This is a tale of data cleaning made much easier and quicker because of these packages, with gratitude to the authors for developing these tools. I'll describe my experience with `tidyxl` here, and describe `janitor` in a later post. 
+
+What are the most common problems I'm faced with in Excel files? In no particular order, they are:
+
++ Multiple tables on one sheet
++ Notes in random locations
++ Merged cells
++ Data type problems due to unintentional spaces
++ Color as metadata
+
+
