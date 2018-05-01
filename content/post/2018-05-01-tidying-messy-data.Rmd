@@ -1,8 +1,9 @@
 ---
-title: Tidying messy data
+title: Tidying messy Excel data (Introduction)
 author: Abhijit Dasgupta
 date: '2018-05-01'
-slug: tidying-messy-data
+publishDate: '2018-05-03'
+slug: tidying-messy-data-1
 categories: ["R"]
 tags:
   - R
@@ -13,20 +14,25 @@ header:
 draft: true
 ---
 
+### Personal expressiveness, or how data is stored in a spreadsheet
 
+When you get data from a broad research community, the variability in how that data is 
+formatted and stored is truly astonishing. Of course there are the standardized formats that are output from machines, like Next Generation Sequencing and other automated systems. That is a saving grace!
 
-I think that generally, we are all too familiar with poorly formatted Excel files, which apparently are visually organized to the creator but drive a computer to fits. . We all want to collect data, but it seems almost noone is trained in **how** to collect and store data. Apparently since everyone has seen spreadsheets, it *should* be intuitive, or at least that's how it often seems. Even in my statistics training, the lesson of how to store data to make it easier to use was never really a lesson taught but rather a lesson learned through collaboration, often imperfectly. The impact of Hadley's ["Tidy Data"](https://vita.had.co.nz/papers/tidy-data.pdf) was immeasurable in bringing clear structure  to storing data to make them more computer-friendly. Other strategies are of course possible for particular situations, but on the whole, the principle of tidy data makes things better more often than not. 
+But for smaller data, or data collected in the lab, the possibilities are truly endless! You can get every possiblle color-coding of rows, columns and cells, merged cells, 
+hidden columns and rows, and inopportune blank spaces that convert numbers to characters, 
+and notes where there should be numbers. That's just from the more organized spreadsheets. Then you get multiple tables in the same spreadsheet, ad hoc computations in some cells, 
+cells copied by hand (with error), and sundry other variations on this theme. In other words, it can be a nightmare scenario for the analyst. To wit, 
 
-Despite my fervent wish that my collaborators get basic training in "how to store data", that alas hasn't come to pass. So often I'm stuck with data that is visually organized (to varying degrees) but almost impossible to use computationally. 
+```{r echo=FALSE}
+blogdown::shortcode('tweet','989274016807448577')
+```
 
-Two R packages have repeatedly come to my rescue for cleaning messy data supplied as Excel files: [`tidyxl`](https://github.com/nacnudus/tidyxl) by Duncan Garmonsway, and [`janitor`](https://github.com/sfirke/janitor) by Sam Firke. This is a tale of data cleaning made much easier and quicker because of these packages, with gratitude to the authors for developing these tools. I'll describe my experience with `tidyxl` here, and describe `janitor` in a later post. 
+In thinking about this post, I went back and looked at the documentation of the [`readxl`](http://readxl.tidyverse.org) package, which has made reading Excel files into R a lot easier than before. This package is quite powerful, so as long as data are in a 
+relatively clean tabular form, this tool can pull it into R; see [these](http://readxl.tidyverse.org/articles/sheet-geometry.html) [vignettes](http://readxl.tidyverse.org/articles/sheet-geometry.html) to get a real sense of how to process decently behaved Excel files with R. 
 
-What are the most common problems I'm faced with in Excel files? In no particular order, they are:
+### Resources
 
-+ Multiple tables on one sheet
-+ Notes in random locations
-+ Merged cells
-+ Data type problems due to unintentional spaces
-+ Color as metadata
-
-
+1. [tidyeval meets Spreadsheet Hell](http://rpubs.com/jennybc/untangle-tidyeval)
+2. [Carpentries lesson on spreadsheet practices](http://www.datacarpentry.org/spreadsheet-ecology-lesson/)
+https://twitter.com/JennyBryan/status/989274016807448577
