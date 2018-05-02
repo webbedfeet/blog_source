@@ -24,6 +24,7 @@ and notes where there should be numbers. That's just from the more organized spr
 cells copied by hand (with error), and sundry other variations on this theme. In other words, it can be a nightmare scenario for the analyst. To wit, 
 
 ```{r echo=FALSE}
+
 blogdown::shortcode('tweet','989274016807448577')
 ```
 

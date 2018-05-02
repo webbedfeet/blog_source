@@ -56,3 +56,5 @@ Data Community DC for several years. Dr. Dasgupta has also conducted well-regard
 education courses and corporate trainings on data science topics, including R and Python, machine learning
 and best data analytic practices, often in partnership with [District Data Labs](https://www.districtdatalabs.com/). He teaches in and is co-chair of the Bioinformatics and Data Science 
 Department of the [FAES Graduate School at NIH](https://faes.org/content/graduate-school). 
+
+Dr. Dasgupta is open to opportunities in data science consulting, training, teaching and grant collaborations. 

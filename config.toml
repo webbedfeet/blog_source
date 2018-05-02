@@ -35,9 +35,14 @@ defaultContentLanguageInSubdir = false
 # Get last modified date for content from Git?
 enableGitInfo = false
 
+# Limit number of entries in RSS feed
+rssLimit = 15
+
 [outputs]
   home = [ "HTML", "CSS", "RSS" ]
   section = [ "HTML", "RSS" ]
+  taxonomy = ["HTML", "RSS"]
+  taxonomyTerm = ["HTML","RSS"]
 
 # Configure BlackFriday Markdown rendering.
 #   See: https://gohugo.io/readfiles/bfconfig/
