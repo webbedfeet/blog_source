@@ -9,7 +9,6 @@ tags:
 slug: practical-data-science-cookbook
 ---
 
-# Practical Data Science Cookbook
 
 ![Book cover](https://dgdsbygo8mp3h.cloudfront.net/sites/default/files/imagecache/ppv4_main_book_cover/0246OS_Practical%20Data%20Science%20Cookbook_cover.jpg)
 
