@@ -3,6 +3,5 @@
 .RData
 .Ruserdata
 public/*
-*.html
 *.xlsx
 blogdown/*
