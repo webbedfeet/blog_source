@@ -15,8 +15,8 @@ header:
 
 <p>Well, here’s what I was dealing with:</p>
 <div class="figure">
-<img src="/img/spreadsheet1.png" alt="spreadsheet1.png" />
-<p class="caption">spreadsheet1.png</p>
+<img src="/img/spreadsheet1.png" alt="Exemplar Excel file from collaborator" />
+<p class="caption"><em>Exemplar Excel file from collaborator</em></p>
 </div>
 <p>Notice that we have 3 header rows, first with patient IDs, second with spine region, and third with variable names (A and B, to protect the innocent).</p>
 <div id="goal" class="section level4">
@@ -42,7 +42,7 @@ head(d1)</code></pre>
 ## #   `8__1` &lt;chr&gt;, `6` &lt;chr&gt;, `6__1` &lt;chr&gt;, `43` &lt;chr&gt;, `43__1` &lt;chr&gt;,
 ## #   `48` &lt;chr&gt;, `48__1` &lt;chr&gt;, `46` &lt;chr&gt;, `46__1` &lt;chr&gt;, `4` &lt;chr&gt;,
 ## #   `4__1` &lt;chr&gt;, `9` &lt;chr&gt;, `9__1` &lt;chr&gt;</code></pre>
-<p>This strategy gives us funky column names, and pushes two of the headers into data rows. Since the headers are in rows, they’re a little harder to extract and work with.</p>
+<p>This strategy gives us funky column names, and pushes two of the headers into data rows. Since the headers are in rows, they’re a little harder to extract and work with. More worrisome is the fact that since the headers leaked into the data rows, the columns are all of type <code>character</code> rather than type <code>numeric</code>, which would now require further careful conversion after cleaning. So I don’t think <code>readxl</code> is the way to go here, if there’s a better solution. :wink:</p>
 </div>
 <div id="attempt-2-tidyxl" class="section level2">
 <h2>Attempt 2 (tidyxl)</h2>
@@ -181,5 +181,5 @@ cleanData3(d2)</code></pre>
 ## 10 10      105.  29.2 0.421
 ## # ... with 578 more rows</code></pre>
 <p>I get to the same output, but with much cleaner code. This is cool!!</p>
-<p>I’m going to go deeper into the unpivotr documentation and see what else can be in my regular pipeline. A big thank you to the tool-makers that create these tools that make everyday activies easier and make us stay saner.</p>
+<p>I’m going to go deeper into the <code>unpivotr</code> documentation and see what else can be in my regular pipeline. A big thank you to the tool-makers that create these tools that make everyday activies easier and make us stay saner.</p>
 </div>

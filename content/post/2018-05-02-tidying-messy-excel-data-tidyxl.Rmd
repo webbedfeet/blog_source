@@ -13,7 +13,7 @@ header:
 
 Well, here's what I was dealing with:
 
-![spreadsheet1.png](/img/spreadsheet1.png)
+![*Exemplar Excel file from collaborator*](/img/spreadsheet1.png)
 
 Notice that we have 3 header rows, first with patient IDs, second with spine region, and third with variable names (A and B, to protect the innocent). 
 
@@ -30,7 +30,7 @@ d1 <- readxl::read_excel('spreadsheet1.xlsx')
 head(d1)
 ```
 
-This strategy gives us funky column names, and pushes two of the headers into data rows. Since the headers are in rows, they're a little harder to extract and work with.
+This strategy gives us funky column names, and pushes two of the headers into data rows. Since the headers are in rows, they're a little harder to extract and work with. More worrisome is the fact that since the headers leaked into the data rows, the columns are all of type `character` rather than type `numeric`, which would now require further careful conversion after cleaning. So I don't think `readxl` is the way to go here, if there's a better solution. :wink:
 
 ## Attempt 2 (tidyxl)
 
@@ -139,7 +139,7 @@ cleanData3(d2)
 
 I get to the same output, but with much cleaner code. This is cool!!
 
-I'm going to go deeper into the unpivotr documentation and see what else can be in my regular pipeline. A big thank you to the tool-makers that create these tools that make everyday activies easier and make us stay saner. 
+I'm going to go deeper into the `unpivotr` documentation and see what else can be in my regular pipeline. A big thank you to the tool-makers that create these tools that make everyday activies easier and make us stay saner. 
 
 
 
