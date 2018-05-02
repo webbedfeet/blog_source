@@ -25,13 +25,6 @@ I will use the `warpbreaks` dataset as an example. This data looks at the number
 data(warpbreaks)
 glimpse(warpbreaks)
 ```
-```r
-## Observations: 54
-## Variables: 3
-## $ breaks  <dbl> 26, 30, 54, 25, 70, 52, 51, 26, 67, 18, 21, 29, 17, 12...
-## $ wool    <fctr> A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,...
-## $ tension <fctr> L, L, L, L, L, L, L, L, L, M, M, M, M, M, M, M, M, M,...
-```
 
 ### A single panel
 
@@ -43,7 +36,6 @@ geom_boxplot()
 plt1
 ```
 
-![plot of chunk plt1](https://dl.dropboxusercontent.com/u/36792950/wp/figure/plt1-1.png)
 
 Adding the p-value to this is also rather simple. We will perform a two-sample t.test and report the p-value on the plot
 
@@ -54,7 +46,6 @@ plt1 + geom_text(aes(x=2, y = 60, # Where do we put the annotation
 label=paste('P-value:', format.pval(pval, digits=2))))
 ```
 
-![plot of chunk plt1-1](https://dl.dropboxusercontent.com/u/36792950/wp/figure/plt1-1-1.png)
 
 ### Multiple panels
 
@@ -65,23 +56,12 @@ warp2 <- gather(warpbreaks, variable, value, -breaks)
 head(warp2)
 ```
 
-```
-##   breaks variable value
-## 1     26     wool     A
-## 2     30     wool     A
-## 3     54     wool     A
-## 4     25     wool     A
-## 5     70     wool     A
-## 6     52     wool     A
-```
-
 Now we can plot this using ggplot2
 
 ```r
 ggplot(warp2, aes(x = value, y = breaks))+geom_boxplot()+facet_wrap(~variable, nrow=1)
 ```
 
-![plot of chunk fig1](https://dl.dropboxusercontent.com/u/36792950/wp/figure/fig1-1.png)
 
 Ooops!! When we used `gather` to melt the data frame and create one variable for the two categorical variables, with the levels all shared in the `variable` column. So the plot shows all the possible categories. We can easily fix this.
 
@@ -100,28 +80,12 @@ select(variable, pval)
 pvalues
 ```
 
-```
-## # A tibble: 2 × 2
-##   variable        pval
-##      <chr>       <dbl>
-## 1     wool 0.108397092
-## 2  tension 0.001752817
-```
-
 I'll also include in this data frame (or `tibble` as the tidyverse calls it) the location of the annotation on each graph, using the same variable names as the graph
 
 ```r
 pvalues <- pvalues %>%
 mutate(value = c(1.5,2.5), breaks = 60)
 pvalues
-```
-
-```
-## # A tibble: 2 × 4
-##   variable        pval value breaks
-##      <chr>       <dbl> <dbl>  <dbl>
-## 1     wool 0.108397092   1.5     60
-## 2  tension 0.001752817   2.5     60
 ```
 
 Now, let's plot these onto the facetted plot
@@ -133,7 +97,5 @@ label = paste('P-value:',
 format.pval(pval, digits=1))))
 plt2_annot
 ```
-
-![plot of chunk annotated](https://dl.dropboxusercontent.com/u/36792950/wp/figure/annotated-1.png)
 
 Obviously, if we wanted to make this graph publication quality, we'd need to modify the labels and perhaps the background, but this example gets you to the point where you can put p-values onto facetted plots. In fact, there's nothing special about p-values here; you could add any facet-specific annotation onto your facetted plots using the same template.
