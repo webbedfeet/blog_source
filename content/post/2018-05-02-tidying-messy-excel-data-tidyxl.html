@@ -1,0 +1,184 @@
+---
+title: Tidying messy Excel data (tidyxl)
+author: Abhijit Dasgupta
+date: '2018-05-02'
+publishdate: '2018-05-03'
+slug: tidying-messy-excel-data-tidyxl
+categories: []
+tags: []
+header:
+  caption: ''
+  image: ''
+---
+
+
+
+<p>Well, here’s what I was dealing with:</p>
+<div class="figure">
+<img src="/img/spreadsheet1.png" alt="spreadsheet1.png" />
+<p class="caption">spreadsheet1.png</p>
+</div>
+<p>Notice that we have 3 header rows, first with patient IDs, second with spine region, and third with variable names (A and B, to protect the innocent).</p>
+<div id="goal" class="section level4">
+<h4>Goal</h4>
+<p>A dataset that, for each patient and
+each angle gives us corresponding values of A and B. So this would be a
+four-column data set with ID, angle, A and B.</p>
+</div>
+<div id="attempt-1-readxl" class="section level2">
+<h2>Attempt 1 (readxl)</h2>
+<pre class="r"><code>d1 &lt;- readxl::read_excel(&#39;spreadsheet1.xlsx&#39;)
+head(d1)</code></pre>
+<pre><code>## # A tibble: 6 x 26
+##   X__1   patient `44`   `44__1` `10`   `10__1`  `3`   `3__1` `53`  `53__1`
+##   &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  
+## 1 &lt;NA&gt;   IDS     T5/T6  T5/T6   T5/T6  T5/T6    T5/T6 T5/T6  T5/T6 T5/T6  
+## 2 angles &lt;NA&gt;    A      B       A      B        A     B      A     B      
+## 3 60     &lt;NA&gt;    31.83… 1       31.52… 1        32.9… 0      31.8… 0      
+## 4 65     &lt;NA&gt;    31.66… 1       31.33… 1        32.2… 0      32.3… 0      
+## 5 70     &lt;NA&gt;    31.45… 1       31.09… 0.20200… 31.7… 0      32.5… 0      
+## 6 75     &lt;NA&gt;    31.08… 1       30.96… 0.44831… 31.2… 8.641… 32.3… 1      
+## # ... with 16 more variables: `2` &lt;chr&gt;, `2__1` &lt;chr&gt;, `8` &lt;chr&gt;,
+## #   `8__1` &lt;chr&gt;, `6` &lt;chr&gt;, `6__1` &lt;chr&gt;, `43` &lt;chr&gt;, `43__1` &lt;chr&gt;,
+## #   `48` &lt;chr&gt;, `48__1` &lt;chr&gt;, `46` &lt;chr&gt;, `46__1` &lt;chr&gt;, `4` &lt;chr&gt;,
+## #   `4__1` &lt;chr&gt;, `9` &lt;chr&gt;, `9__1` &lt;chr&gt;</code></pre>
+<p>This strategy gives us funky column names, and pushes two of the headers into data rows. Since the headers are in rows, they’re a little harder to extract and work with.</p>
+</div>
+<div id="attempt-2-tidyxl" class="section level2">
+<h2>Attempt 2 (tidyxl)</h2>
+<pre class="r"><code>d2 &lt;- tidyxl::xlsx_cells(&#39;spreadsheet1.xlsx&#39;)
+head(d2)</code></pre>
+<pre><code>## # A tibble: 6 x 21
+##   sheet address   row   col is_blank data_type error logical numeric
+##   &lt;chr&gt; &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;lgl&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;lgl&gt;     &lt;dbl&gt;
+## 1 T5T6  B1          1     2 FALSE    character &lt;NA&gt;  NA          NA 
+## 2 T5T6  C1          1     3 FALSE    numeric   &lt;NA&gt;  NA          44.
+## 3 T5T6  D1          1     4 FALSE    numeric   &lt;NA&gt;  NA          44.
+## 4 T5T6  E1          1     5 FALSE    numeric   &lt;NA&gt;  NA          10.
+## 5 T5T6  F1          1     6 FALSE    numeric   &lt;NA&gt;  NA          10.
+## 6 T5T6  G1          1     7 FALSE    numeric   &lt;NA&gt;  NA           3.
+## # ... with 12 more variables: date &lt;dttm&gt;, character &lt;chr&gt;,
+## #   character_formatted &lt;list&gt;, formula &lt;chr&gt;, is_array &lt;lgl&gt;,
+## #   formula_ref &lt;chr&gt;, formula_group &lt;int&gt;, comment &lt;chr&gt;, height &lt;dbl&gt;,
+## #   width &lt;dbl&gt;, style_format &lt;chr&gt;, local_format_id &lt;int&gt;</code></pre>
+<p>The <code>xlsx_cells</code> captures the data in a tidy fashion, explicitly calling out rows and columns and other metadata within each cell. We can clean up this data using tidyverse functions:</p>
+<pre class="r"><code>library(tidyverse)
+cleanData1 &lt;- function(d) {
+  angle &lt;- d %&gt;% filter(row &gt;= 4, col == 1) %&gt;% pull(numeric)
+  name &lt;- d %&gt;% filter(row %in% c(1,3), col &gt;= 3) %&gt;%
+    mutate(character = ifelse(is.na(character), 
+                              as.character(numeric),
+                              character)) %&gt;%
+    select(row, col, character) %&gt;%
+    filter(!is.na(character)) %&gt;%
+    spread(row, character) %&gt;%
+    unite(ID, `1`:`3`, sep = &#39;_&#39;) %&gt;%
+    pull(ID)
+  data &lt;- d %&gt;% filter(row &gt;= 4, col &gt;= 3) %&gt;%
+    filter(!is.na(numeric)) %&gt;%
+    select(row, col, numeric) %&gt;%
+    spread(col, numeric) %&gt;%
+    select(-row) %&gt;%
+    set_names(name) %&gt;%
+    cbind(angle) %&gt;%
+    gather(variable, value, -angle) %&gt;%
+    separate(variable, c(&#39;ID&#39;,&#39;Measure&#39;), sep = &#39;_&#39;) %&gt;%
+    spread(Measure, value) %&gt;%
+    select(ID, angle, A, B) %&gt;%
+    arrange(ID, angle)
+  return(data)
+}
+
+head(cleanData1(d2))</code></pre>
+<pre><code>##   ID angle        A        B
+## 1 10    60 31.52867 1.000000
+## 2 10    65 31.33477 1.000000
+## 3 10    70 31.09272 0.202002
+## 4 10    75 30.96078 0.448317
+## 5 10    80 30.79397 0.670876
+## 6 10    85 30.52185 0.461406</code></pre>
+<p>This is a lot of data munging, and though <code>dplyr</code> is powerful, it took a lot of trial and error to get the final pipeline done.</p>
+<p>Nonetheless, I was really psyched about <code>tidyxl</code>, since it made a job that would have taken manual manipulation automated (I had 12 spreadsheets like this to process). I was going to write a blog post on this cool package that made my life dealing with messy Excel file a piece of cake. But wait, there’s more…</p>
+</div>
+<div id="attempt-3-tidyxl-unpivotr" class="section level2">
+<h2>Attempt 3 (tidyxl + unpivotr)</h2>
+<p>I didn’t know about <code>unpivotr</code> until this post:
+{{% tweet "938834824688689152" %}}
+So maybe all that complicated munging can be simplfied.</p>
+<pre class="r"><code># devtools::install_github(&#39;nacnudus/unpivotr&#39;)
+library(unpivotr)
+
+cleanData2 &lt;- function(d){
+  bl &lt;- d %&gt;% select(row, col, data_type, numeric, character) %&gt;% 
+    behead(&#39;N&#39;, ID) %&gt;% 
+    behead(&#39;N&#39;, spine) %&gt;% 
+    behead(&#39;N&#39;, variable) 
+  # Extract the angles column
+  bl1 &lt;- bl %&gt;% filter(variable == &#39;angles&#39;) %&gt;% spatter(variable) %&gt;% 
+    select(row, angles)
+  # Extract the rest of the columns
+  bl2 &lt;- bl %&gt;% filter(variable %in% c(&#39;A&#39;,&#39;B&#39;)) %&gt;% select(-spine, -col) %&gt;% 
+    spatter(ID) %&gt;% # Spread to columns
+    select(-character) %&gt;% # All my variables are numeric
+    gather(ID, value, -row, -variable) %&gt;% 
+    spread(variable, value)
+  final &lt;- bl1 %&gt;% left_join(bl2) %&gt;% # put things back together
+    arrange(ID, angles) %&gt;% 
+    select(ID, everything(),-row) # re-arrange columns
+  return(final)
+}
+
+cleanData2(d2)</code></pre>
+<pre><code>## # A tibble: 588 x 4
+##    ID    angles     A     B
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 10       60.  31.5 1.00 
+##  2 10       65.  31.3 1.00 
+##  3 10       70.  31.1 0.202
+##  4 10       75.  31.0 0.448
+##  5 10       80.  30.8 0.671
+##  6 10       85.  30.5 0.461
+##  7 10       90.  30.3 0.245
+##  8 10       95.  30.0 0.159
+##  9 10      100.  29.7 0.170
+## 10 10      105.  29.2 0.421
+## # ... with 578 more rows</code></pre>
+<p>In this example, I’m using the <code>behead</code> function (available in the development version of <code>unpivotr</code> on GitHub) to extract out the three
+rows of headers. Then I’m extracting out the <code>angles</code> column separately and merging it with the rest of the columns.</p>
+</div>
+<div id="attempt-4-tidyxl-unpivotr" class="section level2">
+<h2>Attempt 4 (tidyxl + unpivotr)</h2>
+<p>After re-reading the <code>unpivotr</code> documentation, I realized that the <code>angles</code> column could be treated as a row header in the <code>unpivotr</code> code. So I further modified the function:</p>
+<pre class="r"><code>cleanData3 &lt;- function(d) {
+  final &lt;- d %&gt;% 
+    select(row, col, data_type, numeric, character) %&gt;% 
+    behead(&#39;N&#39;, ID) %&gt;%  # Extract column headers
+    behead(&#39;N&#39;, spine) %&gt;% 
+    behead(&#39;N&#39;, variable) %&gt;% 
+    behead(&#39;W&#39;, angles) %&gt;% # angles as row header
+    select(numeric, ID:angles, data_type, -spine) %&gt;% # all vars are numeric
+    filter(variable %in% c(&#39;A&#39;, &#39;B&#39;)) %&gt;% # Kills off some extra columns
+    spatter(variable) # Spreads, using data_type, numeric
+  return(final)
+}
+
+cleanData3(d2)</code></pre>
+<pre><code>## # A tibble: 588 x 4
+##    ID    angles     A     B
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 10       60.  31.5 1.00 
+##  2 10       65.  31.3 1.00 
+##  3 10       70.  31.1 0.202
+##  4 10       75.  31.0 0.448
+##  5 10       80.  30.8 0.671
+##  6 10       85.  30.5 0.461
+##  7 10       90.  30.3 0.245
+##  8 10       95.  30.0 0.159
+##  9 10      100.  29.7 0.170
+## 10 10      105.  29.2 0.421
+## # ... with 578 more rows</code></pre>
+<p>I get to the same output, but with much cleaner code.</p>
+<blockquote>
+<p>In case you’re wondering about the “N” and “W” in the <code>behead</code> code, <code>unpivotr</code> has a geographic options system as to where the headers are with respect to the main code. This <a href="https://nacnudus.github.io/unpivotr/articles/compass-directions.html">vignette</a> explains this nomenclature.</p>
+</blockquote>
+</div>

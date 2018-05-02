@@ -1,0 +1,40 @@
+---
+title: Tidying messy Excel data (Introduction)
+author: Abhijit Dasgupta
+date: '2018-05-01'
+slug: tidying-messy-data-1
+categories: ["R"]
+tags:
+  - R
+  - messy data
+header:
+  caption: ''
+  image: ''
+---
+
+
+
+<div id="personal-expressiveness-or-how-data-is-stored-in-a-spreadsheet" class="section level3">
+<h3>Personal expressiveness, or how data is stored in a spreadsheet</h3>
+<p>When you get data from a broad research community, the variability in how that data is
+formatted and stored is truly astonishing. Of course there are the standardized formats that are output from machines, like Next Generation Sequencing and other automated systems. That is a saving grace!</p>
+<p>But for smaller data, or data collected in the lab, the possibilities are truly endless! You can get every possiblle color-coding of rows, columns and cells, merged cells,
+hidden columns and rows, and inopportune blank spaces that convert numbers to characters,
+and notes where there should be numbers. That’s just from the more organized spreadsheets. Then you get multiple tables in the same spreadsheet, ad hoc computations in some cells,
+cells copied by hand (with error), and sundry other variations on this theme. In other words, it can be a nightmare scenario for the analyst. To wit,</p>
+{{% tweet "989274016807448577" %}}
+<p>In thinking about this post, I went back and looked at the documentation of the <a href="http://readxl.tidyverse.org"><code>readxl</code></a> package, which has made reading Excel files into R a lot easier than before. This package is quite powerful, so as long as data are in a
+relatively clean tabular form, this tool can pull it into R; see <a href="http://readxl.tidyverse.org/articles/sheet-geometry.html">these</a> <a href="http://readxl.tidyverse.org/articles/sheet-geometry.html">vignettes</a> to get a real sense of how to process decently behaved Excel files with R.</p>
+<blockquote>
+<p>On a side note, how many ways of importing Excel files into R can you name, or have you used?</p>
+</blockquote>
+<p>The <code>readxl</code> package has been my friend for a while, but then I received some well-intentioned spreadsheets that even <code>readxl</code> wouldn’t touch, despite much coaxing. Now, I had two options: ask the collaborator to re-format the spreadsheet (manually, of course :smile:), which in my experience is a disaster waiting to happen; or just take the spreadsheet as is and figure out how to import it into R. I almost always take the latter route, and <code>tidyxl</code> is my bosom friend in this effort. In the next part of this series, I’ll describe my experiences with <code>tidyxl</code> and why, every time I use it, I say a small blessing for the team that created it.</p>
+</div>
+<div id="resources" class="section level3">
+<h3>Resources</h3>
+<ol style="list-style-type: decimal">
+<li><a href="http://rpubs.com/jennybc/untangle-tidyeval">tidyeval meets Spreadsheet Hell</a></li>
+<li><a href="http://www.datacarpentry.org/spreadsheet-ecology-lesson/">Carpentries lesson on spreadsheet practices</a></li>
+<li><a href="http://readxl.tidyverse.org/articles/articles/readxl-workflows.html"><code>readxl</code> workflows</a></li>
+</ol>
+</div>
