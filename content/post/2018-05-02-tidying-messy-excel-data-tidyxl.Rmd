@@ -113,6 +113,9 @@ cleanData2(d2)
 In this example, I'm using the `behead` function (available in the development version of `unpivotr` on GitHub) to extract out the three 
 rows of headers. Then I'm extracting out the `angles` column separately and merging it with the rest of the columns. 
 
+> In case you're wondering about the "N" in the `behead` code, `unpivotr` has a geographic options system as to where the headers are with respect to the main code. This [vignette](https://nacnudus.github.io/unpivotr/articles/compass-directions.html) explains this nomenclature.
+
+
 ## Attempt 4 (tidyxl + unpivotr)
 
 After re-reading the `unpivotr` documentation, I realized that the `angles` column could be treated as a row header in the `unpivotr` code. So I further modified the function:
@@ -134,8 +137,9 @@ cleanData3 <- function(d) {
 cleanData3(d2)
 ```
 
-I get to the same output, but with much cleaner code. 
+I get to the same output, but with much cleaner code. This is cool!!
 
-> In case you're wondering about the "N" and "W" in the `behead` code, `unpivotr` has a geographic options system as to where the headers are with respect to the main code. This [vignette](https://nacnudus.github.io/unpivotr/articles/compass-directions.html) explains this nomenclature.
+I'm going to go deeper into the unpivotr documentation and see what else can be in my regular pipeline. A big thank you to the tool-makers that create these tools that make everyday activies easier and make us stay saner. 
+
 
 

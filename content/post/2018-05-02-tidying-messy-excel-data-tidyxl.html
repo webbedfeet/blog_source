@@ -145,6 +145,9 @@ cleanData2(d2)</code></pre>
 ## # ... with 578 more rows</code></pre>
 <p>In this example, I’m using the <code>behead</code> function (available in the development version of <code>unpivotr</code> on GitHub) to extract out the three
 rows of headers. Then I’m extracting out the <code>angles</code> column separately and merging it with the rest of the columns.</p>
+<blockquote>
+<p>In case you’re wondering about the “N” in the <code>behead</code> code, <code>unpivotr</code> has a geographic options system as to where the headers are with respect to the main code. This <a href="https://nacnudus.github.io/unpivotr/articles/compass-directions.html">vignette</a> explains this nomenclature.</p>
+</blockquote>
 </div>
 <div id="attempt-4-tidyxl-unpivotr" class="section level2">
 <h2>Attempt 4 (tidyxl + unpivotr)</h2>
@@ -177,8 +180,6 @@ cleanData3(d2)</code></pre>
 ##  9 10      100.  29.7 0.170
 ## 10 10      105.  29.2 0.421
 ## # ... with 578 more rows</code></pre>
-<p>I get to the same output, but with much cleaner code.</p>
-<blockquote>
-<p>In case you’re wondering about the “N” and “W” in the <code>behead</code> code, <code>unpivotr</code> has a geographic options system as to where the headers are with respect to the main code. This <a href="https://nacnudus.github.io/unpivotr/articles/compass-directions.html">vignette</a> explains this nomenclature.</p>
-</blockquote>
+<p>I get to the same output, but with much cleaner code. This is cool!!</p>
+<p>I’m going to go deeper into the unpivotr documentation and see what else can be in my regular pipeline. A big thank you to the tool-makers that create these tools that make everyday activies easier and make us stay saner.</p>
 </div>
