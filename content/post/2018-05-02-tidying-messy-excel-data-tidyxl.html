@@ -4,8 +4,8 @@ author: Abhijit Dasgupta
 date: '2018-05-02'
 publishdate: '2018-05-03'
 slug: tidying-messy-excel-data-tidyxl
-categories: []
-tags: []
+categories: ['R']
+tags: ['R']
 header:
   caption: ''
   image: ''
@@ -42,7 +42,7 @@ head(d1)</code></pre>
 ## #   `8__1` &lt;chr&gt;, `6` &lt;chr&gt;, `6__1` &lt;chr&gt;, `43` &lt;chr&gt;, `43__1` &lt;chr&gt;,
 ## #   `48` &lt;chr&gt;, `48__1` &lt;chr&gt;, `46` &lt;chr&gt;, `46__1` &lt;chr&gt;, `4` &lt;chr&gt;,
 ## #   `4__1` &lt;chr&gt;, `9` &lt;chr&gt;, `9__1` &lt;chr&gt;</code></pre>
-<p>This strategy gives us funky column names, and pushes two of the headers into data rows. Since the headers are in rows, they’re a little harder to extract and work with. More worrisome is the fact that since the headers leaked into the data rows, the columns are all of type <code>character</code> rather than type <code>numeric</code>, which would now require further careful conversion after cleaning. So I don’t think <code>readxl</code> is the way to go here, if there’s a better solution. :wink:</p>
+<p>This strategy gives us funky column names, and pushes two of the headers into data rows. Since the headers are in rows, they’re a little harder to extract and work with. More worrisome is the fact that since the headers leaked into the data rows, the columns are all of type <code>character</code> rather than type <code>numeric</code>, which would now require further careful conversion after cleaning. So I don’t think <code>readxl</code> is the way to go here, if there’s a better solution.</p>
 </div>
 <div id="attempt-2-tidyxl" class="section level2">
 <h2>Attempt 2 (tidyxl)</h2>
@@ -98,7 +98,7 @@ head(cleanData1(d2))</code></pre>
 ## 5 10    80 30.79397 0.670876
 ## 6 10    85 30.52185 0.461406</code></pre>
 <p>This is a lot of data munging, and though <code>dplyr</code> is powerful, it took a lot of trial and error to get the final pipeline done.</p>
-<p>Nonetheless, I was really psyched about <code>tidyxl</code>, since it made a job that would have taken manual manipulation automated (I had 12 spreadsheets like this to process). I was going to write a blog post on this cool package that made my life dealing with messy Excel file a piece of cake. But wait, there’s more…</p>
+<p>Nonetheless, I was really psyched about <code>tidyxl</code>, since it automated a job that would have taken manual manipulation (I had 12 spreadsheets like this to process). I was going to write a blog post on this cool package that made my life dealing with messy Excel file a piece of cake. But wait, there’s more…</p>
 </div>
 <div id="attempt-3-tidyxl-unpivotr" class="section level2">
 <h2>Attempt 3 (tidyxl + unpivotr)</h2>
