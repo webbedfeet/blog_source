@@ -16,28 +16,53 @@ with each panel representing a categorical grouping variable. This seems easy en
 <pre class="r"><code>library(broom)
 library(ggplot2)
 library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ tibble  1.4.2     ✔ purrr   0.2.4
+## ✔ tidyr   0.8.0     ✔ dplyr   0.7.4
+## ✔ readr   1.1.1     ✔ stringr 1.3.0
+## ✔ tibble  1.4.2     ✔ forcats 0.3.0</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <p>I will use the <code>warpbreaks</code> dataset as an example. This data looks at the number of breaks in yarn, for two types of yarn (A and B) and three loom tensions (L, M, H)</p>
 <pre class="r"><code>data(warpbreaks)
 glimpse(warpbreaks)</code></pre>
+<pre><code>## Observations: 54
+## Variables: 3
+## $ breaks  &lt;dbl&gt; 26, 30, 54, 25, 70, 52, 51, 26, 67, 18, 21, 29, 17, 12...
+## $ wool    &lt;fct&gt; A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, ...
+## $ tension &lt;fct&gt; L, L, L, L, L, L, L, L, L, M, M, M, M, M, M, M, M, M, ...</code></pre>
 <div id="a-single-panel" class="section level3">
 <h3>A single panel</h3>
 <p>Let’s first start with creating a grouped boxplot of breaks by wool type. This is pretty straightforward in ggplot2.</p>
 <pre class="r"><code>plt1 &lt;- ggplot(warpbreaks, aes(x=wool, y=breaks))+
 geom_boxplot()
 plt1</code></pre>
+<p><img src="/post/2016-10-20-annotated-facets-with-ggplot2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Adding the p-value to this is also rather simple. We will perform a two-sample t.test and report the p-value on the plot</p>
 <pre class="r"><code>tst = t.test(breaks ~ wool, data=warpbreaks)
 pval = tidy(tst)$p.value # from broom
 plt1 + geom_text(aes(x=2, y = 60, # Where do we put the annotation
 label=paste(&#39;P-value:&#39;, format.pval(pval, digits=2))))</code></pre>
+<p><img src="/post/2016-10-20-annotated-facets-with-ggplot2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="multiple-panels" class="section level3">
 <h3>Multiple panels</h3>
 <p>I’ll now show how to do multiple panels. First, we have to transform the data into long format so that ggplot2 can leverage it.</p>
-<pre class="r"><code>warp2 &lt;- gather(warpbreaks, variable, value, -breaks)
-head(warp2)</code></pre>
+<pre class="r"><code>warp2 &lt;- gather(warpbreaks, variable, value, -breaks)</code></pre>
+<pre><code>## Warning: attributes are not identical across measure variables;
+## they will be dropped</code></pre>
+<pre class="r"><code>head(warp2)</code></pre>
+<pre><code>##   breaks variable value
+## 1     26     wool     A
+## 2     30     wool     A
+## 3     54     wool     A
+## 4     25     wool     A
+## 5     70     wool     A
+## 6     52     wool     A</code></pre>
 <p>Now we can plot this using ggplot2</p>
 <pre class="r"><code>ggplot(warp2, aes(x = value, y = breaks))+geom_boxplot()+facet_wrap(~variable, nrow=1)</code></pre>
+<p><img src="/post/2016-10-20-annotated-facets-with-ggplot2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>Ooops!! When we used <code>gather</code> to melt the data frame and create one variable for the two categorical variables, with the levels all shared in the <code>variable</code> column. So the plot shows all the possible categories. We can easily fix this.</p>
 <pre class="r"><code>plt2 &lt;- ggplot(warp2, aes(x=value, y=breaks))+geom_boxplot()+facet_wrap(~variable, nrow=1, scales=&#39;free_x&#39;)</code></pre>
 <p>Next, we want to put a p-value on each plot. The trick is to create a new data frame for the p-values, with one row per level of the facetting variable. In our example, wool has two levels while tension has three, so to create one p-value per plot I’ll run ANOVA models and provide the p-value of the model effect, i.e., is there any difference in the average number of breaks by levels of each predictor. I’ll use the template Wickham suggests about <a href="http://r4ds.had.co.nz/many-models.html">running multiple models</a> here.</p>
@@ -47,15 +72,26 @@ mutate(mods = map(data, ~anova(lm(breaks ~ value, data = .))),
 pval = map_dbl(mods, ~tidy(.)$p.value[1])) %&gt;%
 select(variable, pval)
 pvalues</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   variable    pval
+##   &lt;chr&gt;      &lt;dbl&gt;
+## 1 wool     0.108  
+## 2 tension  0.00175</code></pre>
 <p>I’ll also include in this data frame (or <code>tibble</code> as the tidyverse calls it) the location of the annotation on each graph, using the same variable names as the graph</p>
 <pre class="r"><code>pvalues &lt;- pvalues %&gt;%
 mutate(value = c(1.5,2.5), breaks = 60)
 pvalues</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   variable    pval value breaks
+##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 wool     0.108     1.5     60
+## 2 tension  0.00175   2.5     60</code></pre>
 <p>Now, let’s plot these onto the facetted plot</p>
 <pre class="r"><code>plt2_annot &lt;- plt2 +
 geom_text(data=pvalues, aes(x=value, y=breaks,
 label = paste(&#39;P-value:&#39;,
 format.pval(pval, digits=1))))
 plt2_annot</code></pre>
+<p><img src="/post/2016-10-20-annotated-facets-with-ggplot2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Obviously, if we wanted to make this graph publication quality, we’d need to modify the labels and perhaps the background, but this example gets you to the point where you can put p-values onto facetted plots. In fact, there’s nothing special about p-values here; you could add any facet-specific annotation onto your facetted plots using the same template.</p>
 </div>
