@@ -131,3 +131,24 @@ clean_col <- function(x, ...){
 
 ```
 
+### Update 2
+
+The second example can be solved by extracting elements of quosures, which are essentially a list. 
+
+```{r}
+clean_cols <- function(x, ...){
+  colvs = quos(...)
+  for(i in 1:length(colvs)){
+    rowvar <-  rlang::sym(paste0('rown',i))
+    x <- x %>% group_by(!!!colvs[1:i]) %>% mutate(!!rowvar := row_number()) %>% 
+      ungroup()
+  }
+  for(i in 1:length(colvs)){
+    rowvar <- rlang::sym(paste0('rown',i))
+    x <- x %>% mutate_at(vars(!!colvs[[i]]), funs(ifelse(!!rowvar > 1, '', .)))
+  }
+  x <- x %>% select(-starts_with('rown'))
+  return(x)
+}
+```
+

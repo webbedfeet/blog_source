@@ -519,4 +519,22 @@ header:
     select (-rown)
 }</code></pre>
 </div>
+<div id="update-2" class="section level3">
+<h3>Update 2</h3>
+<p>The second example can be solved by extracting elements of quosures, which are essentially a list.</p>
+<pre class="r"><code>clean_cols &lt;- function(x, ...){
+  colvs = quos(...)
+  for(i in 1:length(colvs)){
+    rowvar &lt;-  rlang::sym(paste0(&#39;rown&#39;,i))
+    x &lt;- x %&gt;% group_by(!!!colvs[1:i]) %&gt;% mutate(!!rowvar := row_number()) %&gt;% 
+      ungroup()
+  }
+  for(i in 1:length(colvs)){
+    rowvar &lt;- rlang::sym(paste0(&#39;rown&#39;,i))
+    x &lt;- x %&gt;% mutate_at(vars(!!colvs[[i]]), funs(ifelse(!!rowvar &gt; 1, &#39;&#39;, .)))
+  }
+  x &lt;- x %&gt;% select(-starts_with(&#39;rown&#39;))
+  return(x)
+}</code></pre>
+</div>
 </div>
