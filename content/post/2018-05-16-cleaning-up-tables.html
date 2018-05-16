@@ -508,4 +508,15 @@ header:
 </tbody>
 </table>
 <p>I can create these on a case-by-case basis, but I’m not sure how to do this in a function, yet. Looking forward to comments.</p>
+<div id="update" class="section level3">
+<h3>Update</h3>
+<p>I can do the first example with the following code (based on Edwin Thoen’s blog, again):</p>
+<pre class="r"><code>clean_col &lt;- function(x, ...){
+  require(dplyr)
+  colvs &lt;- quos(...)
+  x %&gt;% group_by(!!!colvs) %&gt;% mutate(rown = row_number()) %&gt;% ungroup() %&gt;% 
+    mutate_at(vars(!!!colvs), funs(ifelse(rown &gt; 1, &#39;&#39;, .))) %&gt;% 
+    select (-rown)
+}</code></pre>
+</div>
 </div>

@@ -116,3 +116,18 @@ VADeaths %>% as.data.frame() %>% rownames_to_column('AgeGrp') %>% gather(variabl
 I can create these on a case-by-case basis, but I'm not sure how to do this in a function, yet. Looking forward 
 to comments. 
 
+### Update
+
+I can do the first example with the following code (based on Edwin Thoen's blog, again):
+
+```{r, eval=FALSE}
+clean_col <- function(x, ...){
+  require(dplyr)
+  colvs <- quos(...)
+  x %>% group_by(!!!colvs) %>% mutate(rown = row_number()) %>% ungroup() %>% 
+    mutate_at(vars(!!!colvs), funs(ifelse(rown > 1, '', .))) %>% 
+    select (-rown)
+}
+
+```
+
