@@ -525,7 +525,7 @@ header:
 <pre class="r"><code>clean_cols &lt;- function(x, ...){
   colvs = quos(...)
   for(i in 1:length(colvs)){
-    rowvar &lt;-  rlang::sym(paste0(&#39;rown&#39;,i))
+    rowvar &lt;-  rlang::sym(paste0(&#39;rown&#39;,i)) # Create dummy
     x &lt;- x %&gt;% group_by(!!!colvs[1:i]) %&gt;% mutate(!!rowvar := row_number()) %&gt;% 
       ungroup()
   }
@@ -533,7 +533,7 @@ header:
     rowvar &lt;- rlang::sym(paste0(&#39;rown&#39;,i))
     x &lt;- x %&gt;% mutate_at(vars(!!colvs[[i]]), funs(ifelse(!!rowvar &gt; 1, &#39;&#39;, .)))
   }
-  x &lt;- x %&gt;% select(-starts_with(&#39;rown&#39;))
+  x &lt;- x %&gt;% select(-starts_with(&#39;rown&#39;)) # remove dummies
   return(x)
 }</code></pre>
 </div>
