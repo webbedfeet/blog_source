@@ -138,6 +138,9 @@ The second example can be solved by extracting elements of quosures, which are e
 ```{r}
 clean_cols <- function(x, ...){
   colvs = quos(...)
+  x <- x %>% 
+    mutate_at(vars(!!!colv),as.character) %>% # make sure columns are characters
+    arrange(!!!colv) # Ensure right order of columns
   for(i in 1:length(colvs)){
     rowvar <-  rlang::sym(paste0('rown',i)) # Create dummy
     x <- x %>% group_by(!!!colvs[1:i]) %>% mutate(!!rowvar := row_number()) %>% 
@@ -151,4 +154,24 @@ clean_cols <- function(x, ...){
   return(x)
 }
 ```
+
+### Update 3
+
+Thanks to RAR for his comment. The `clean_cols` function can be greatly simplified using his suggestion:
+
+```{r}
+clean_cols <- function(x, ...){
+  colv = quos(...)
+  x <- x %>% 
+    mutate_at(vars(!!!colv),as.character) %>% # make sure columns are characters
+    arrange(!!!colv) # Ensure right order of columns
+  for(ii in rev(seq_along(colv))){
+    indx = duplicated(select(x, !!!colv[ii:1]))
+    x <- x %>% mutate_at(vars(!!colv[[ii]]), funs(ifelse(indx, '', .)))
+  }
+  return(x)
+}
+```
+
+
 

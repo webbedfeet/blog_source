@@ -524,6 +524,9 @@ header:
 <p>The second example can be solved by extracting elements of quosures, which are essentially a list.</p>
 <pre class="r"><code>clean_cols &lt;- function(x, ...){
   colvs = quos(...)
+  x &lt;- x %&gt;% 
+    mutate_at(vars(!!!colv),as.character) %&gt;% # make sure columns are characters
+    arrange(!!!colv) # Ensure right order of columns
   for(i in 1:length(colvs)){
     rowvar &lt;-  rlang::sym(paste0(&#39;rown&#39;,i)) # Create dummy
     x &lt;- x %&gt;% group_by(!!!colvs[1:i]) %&gt;% mutate(!!rowvar := row_number()) %&gt;% 
@@ -534,6 +537,21 @@ header:
     x &lt;- x %&gt;% mutate_at(vars(!!colvs[[i]]), funs(ifelse(!!rowvar &gt; 1, &#39;&#39;, .)))
   }
   x &lt;- x %&gt;% select(-starts_with(&#39;rown&#39;)) # remove dummies
+  return(x)
+}</code></pre>
+</div>
+<div id="update-3" class="section level3">
+<h3>Update 3</h3>
+<p>Thanks to RAR for his comment. The <code>clean_cols</code> function can be greatly simplified using his suggestion:</p>
+<pre class="r"><code>clean_cols &lt;- function(x, ...){
+  colv = quos(...)
+  x &lt;- x %&gt;% 
+    mutate_at(vars(!!!colv),as.character) %&gt;% # make sure columns are characters
+    arrange(!!!colv) # Ensure right order of columns
+  for(ii in rev(seq_along(colv))){
+    indx = duplicated(select(x, !!!colv[ii:1]))
+    x &lt;- x %&gt;% mutate_at(vars(!!colv[[ii]]), funs(ifelse(indx, &#39;&#39;, .)))
+  }
   return(x)
 }</code></pre>
 </div>
