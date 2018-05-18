@@ -1,0 +1,177 @@
+---
+title: Cleaning up tables
+author: Abhijit
+date: '2018-05-16'
+slug: cleaning-up-tables
+categories:
+  - R
+tags:
+  - R
+  - presentation
+header:
+  caption: ''
+  image: ''
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+clean_col <- function(x, colvar){
+  require(dplyr)
+  colv <- enquo(colvar)
+  x %>% group_by(!!colv) %>% mutate(rown = row_number()) %>% ungroup() %>% 
+    mutate_at(vars(!!colv), funs(ifelse(rown > 1, '', .))) %>% 
+    select (-rown)
+}
+```
+
+## Context
+
+One of things I have to do quite often is create tables for papers and presentations. Often the
+"Table 1" of a paper has descriptives about the study, broken down by subgroups. For presentation
+purposes, it doesn't look good (to me, at least) that the name of each subgroup be repeated down 
+one column of the table.  
+
+One way to deal with this is, of course, by hand. Save the table as a CSV or Excel file, open it
+up in your favorite spreadsheet program, and prettify things. But, of course, this being a R blog, 
+I wanted to create a function that would fix this. I've created hack-y functions for this before, but 
+a [neat trick](https://github.com/tidyverse/tidyr/issues/296)  pointed out [here](https://www.daeconomist.com/post/2018-05-15-spread/) gave me an idea for a more elegant solution.
+It also meant I had to use the [tidyeval](https://dplyr.tidyverse.org/articles/programming.html) paradigm 
+a bit, which I figured I should at least become familiar with.
+
+## Here's what I want to do
+
+Take a table like this:
+```{r, echo=FALSE, results='asis'}
+VADeaths %>% as.data.frame() %>% rownames_to_column('AgeGrp') %>% gather(variable, value, -AgeGrp) %>% separate(variable, c('Location','Gender'), sep=' ') %>% nest(AgeGrp, value) %>% mutate(values = map_dbl(data, ~mean(.$value))) %>% select(-data) %>% knitr::kable()
+```
+
+to something like this:
+
+```{r, echo=FALSE, results='asis'}
+VADeaths %>% as.data.frame() %>% rownames_to_column('AgeGrp') %>% gather(variable, value, -AgeGrp) %>% separate(variable, c('Location','Gender'), sep=' ') %>% nest(AgeGrp, value) %>% mutate(values = map_dbl(data, ~mean(.$value))) %>% select(-data) %>% clean_col(Location) %>% knitr::kable()
+```
+
+The point is that the first column has repeating values, and I just want the first row of the 
+cluster of rows corresponding to Rural and Urban to have text, the rest being blank. I find this
+a cleaner look and more typical of tables I see in papers. 
+
+> This is purely for presentation purposes.I would never do this for data frames I'll still analyze, since the blank cells screw up things. Of 
+course this could be fixed easily using last value carried forward imputation on the column. 
+
+## A solution
+
+I created this simple function to do this for a single column within a `magrittr` pipeline:
+
+```{r, eval=FALSE}
+clean_col <- function(x, colvar){
+  require(dplyr)
+  colv <- enquo(colvar)
+  x %>% 
+    group_by(!!colv) %>% 
+      mutate(rown = row_number()) %>% 
+    ungroup() %>% 
+    mutate_at(vars(!!colv), funs(ifelse(rown > 1, '', .))) %>% 
+    select (-rown)
+```
+
+The first thing to note here is that I'm using quosures and quasiquotation to allow the 
+pipeline to work with the function's inputs, specifically the column name, which is provided as 
+an unquoted name. Admittedly this was done without much understanding, following examples on Edwin Thoen's
+[excellent blog](https://edwinth.github.io/blog/dplyr-recipes/). 
+
+The second thing was the use of the dummy `rown` column to identify the first row of each cluster of rows
+defined by the variable `colvar`. This was inspired by [this blog](https://www.daeconomist.com/post/2018-05-15-spread/) 
+I read through [R-Bloggers](http://www.r-bloggers.com) yesterday. This trick allowed me to easily
+"blank out" the appropriate cells in the `colvar` column.
+
+## Desirable updates
+
+There are two directions I want to take this, but I don't understand `tidyeval` or functions with variable numbers of arguments well enough yet to
+do it. The simpler extension is to do the same process using two or more columns, rather than one column. For
+example, taking
+
+```{r, echo=FALSE, results = 'asis'}
+VADeaths %>% as.data.frame() %>% rownames_to_column('AgeGrp') %>% gather(variable, DeathRate, -AgeGrp) %>% separate(variable, c('Location','Gender'), sep=' ') %>% select(Location, Gender, AgeGrp, DeathRate) %>% 
+  knitr::kable()
+```
+
+to
+
+```{r, echo = F, results = 'asis'}
+VADeaths %>% as.data.frame() %>% rownames_to_column('AgeGrp') %>% gather(variable, DeathRate, -AgeGrp) %>% separate(variable, c('Location','Gender'), sep=' ') %>% select(Location, Gender, AgeGrp, DeathRate) %>% group_by(Location, Gender) %>% mutate(rown = row_number()) %>% ungroup() %>% mutate_at(vars(Location,Gender), funs(ifelse(rown > 1, '', .))) %>% select(-rown) %>% knitr::kable()
+```
+
+The second extension would be to create truly nested row labels, like this:
+
+```{r, echo = F, results = 'asis'}
+VADeaths %>% as.data.frame() %>% rownames_to_column('AgeGrp') %>% gather(variable, DeathRate, -AgeGrp) %>% separate(variable, c('Location','Gender'), sep=' ') %>% select(Location, Gender, AgeGrp, DeathRate) %>% group_by(Location) %>% mutate(rown1 = row_number()) %>% ungroup() %>% 
+  group_by(Location,Gender) %>% 
+  mutate(rown2 = row_number()) %>% 
+  ungroup() %>% 
+  mutate(Location = ifelse(rown1 > 1, '', Location),
+         Gender = ifelse(rown2 > 1, '', Gender)) %>% 
+  select(-rown1, -rown2) %>% knitr::kable()
+```
+
+I can create these on a case-by-case basis, but I'm not sure how to do this in a function, yet. Looking forward 
+to comments. 
+
+### Update
+
+I can do the first example with the following code (based on Edwin Thoen's blog, again):
+
+```{r, eval=FALSE}
+clean_col <- function(x, ...){
+  require(dplyr)
+  colvs <- quos(...)
+  x %>% group_by(!!!colvs) %>% mutate(rown = row_number()) %>% ungroup() %>% 
+    mutate_at(vars(!!!colvs), funs(ifelse(rown > 1, '', .))) %>% 
+    select (-rown)
+}
+
+```
+
+### Update 2
+
+The second example can be solved by extracting elements of quosures, which are essentially a list. 
+
+```{r}
+clean_cols <- function(x, ...){
+  colvs = quos(...)
+  x <- x %>% 
+    mutate_at(vars(!!!colv),as.character) %>% # make sure columns are characters
+    arrange(!!!colv) # Ensure right order of columns
+  for(i in 1:length(colvs)){
+    rowvar <-  rlang::sym(paste0('rown',i)) # Create dummy
+    x <- x %>% group_by(!!!colvs[1:i]) %>% mutate(!!rowvar := row_number()) %>% 
+      ungroup()
+  }
+  for(i in 1:length(colvs)){
+    rowvar <- rlang::sym(paste0('rown',i))
+    x <- x %>% mutate_at(vars(!!colvs[[i]]), funs(ifelse(!!rowvar > 1, '', .)))
+  }
+  x <- x %>% select(-starts_with('rown')) # remove dummies
+  return(x)
+}
+```
+
+### Update 3
+
+Thanks to RAR for his comment. The `clean_cols` function can be greatly simplified using his suggestion:
+
+```{r}
+clean_cols <- function(x, ...){
+  colv = quos(...)
+  x <- x %>% 
+    mutate_at(vars(!!!colv),as.character) %>% # make sure columns are characters
+    arrange(!!!colv) # Ensure right order of columns
+  for(ii in rev(seq_along(colv))){
+    indx = duplicated(select(x, !!!colv[ii:1]))
+    x <- x %>% mutate_at(vars(!!colv[[ii]]), funs(ifelse(indx, '', .)))
+  }
+  return(x)
+}
+```
+
+
+
