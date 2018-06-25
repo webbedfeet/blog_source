@@ -20,7 +20,7 @@ HCUP provides load files for their data sets in SAS, SPSS and Stata. Note that n
 
 First of all, I admit that I am lazy. I don't want to sit with the data dictionary and write out all the format statements in R. However, if HCUP is providing load files, why not use them? Looking at them, I felt that the Stata load file was cleanest in terms of formatting. I wrote the following R script to extract variable names, column widths and formats (string, double, or integer) from the load file.
 
-```{r, eval = FALSE}
+```r
 parseStataCode <- function(statafile){
  require(stringr)
  options(stringsAsFactors=FALSE)
@@ -50,7 +50,7 @@ You can of course add more code to extract missing value definitions and the lik
 
 Now on to the actual job of reading the data. R provides a function read.fwf, but that is painfully slow, so I immediately went to the Gods of Google. A quick internet search found the package [LaF](http://cran.r-project.org/package=LaF), which uses C++ underneath to make accessing large ASCII files faster. LaF also allows some column selection and filtering as data is loaded into memory in R. The workhorse for this is the [laf_open_fwf](http://www.inside-r.org/packages/cran/LaF/docs/laf_open_fwf) function, which requires specification of the column widths and types.
 
-```{r, eval = FALSE}
+```r
 wt <- parseStataCode('StataLoad_NIS_2008_Core.Do')
 d <- laf_open_fwf('NIS_2008_Core.ASC', column_widths=wt$widths,
  column_types=wt$classes, column_names = wt$varnames)
@@ -58,7 +58,7 @@ d <- laf_open_fwf('NIS_2008_Core.ASC', column_widths=wt$widths,
 
 The code above does not actually load the data into R, but essentially creates a pointer to the data on disk. Now I decided to use the (awesome) power of [dplyr](http://cran.r-project.org/package=dplyr) and [magrittr](http://cran.r-project.org/package=magrittr) to extract the frequencies I need. This strategy provides very clear and fast code that I'm happy with right now.
 
-```{r, eval = FALSE}
+```r
 d1 <- d[,c("DRG","HOSPID")] %>%                           # Select only columns I need
  dplyr::filter(DRG %in% c(500)) %>%                       # Keep DRGs I want
  group_by(HOSPID) %>%
