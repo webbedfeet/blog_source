@@ -1,0 +1,475 @@
+---
+title: 'Changing names in the tidyverse: An example for many regressions'
+author: Abhijit Dasgupta
+date: '2017-03-09'
+categories:
+  - R
+slug: changing-names-in-the-tidyverse-an-example-for-many-regressions
+---
+
+
+
+<p>A collaborator posed an interesting R question to me today. She wanted to do several regressions using different outcomes, with models being computed on different strata defined by a combination of experimental design variables. She then just wanted to extract the p-values for the slopes for each of the models, and then filter the strata based on p-value levels.</p>
+<p>This seems straighforward, right? Let’s set up a toy example:</p>
+<pre class="r"><code>library(tidyverse)
+
+dat &lt;- as_tibble(expand.grid(letters[1:4], 1:5))
+d &lt;- vector(&#39;list&#39;, nrow(dat))
+set.seed(102)
+for(i in 1:nrow(dat)){
+  x &lt;- rnorm(100)
+  d[[i]] &lt;- tibble(x = x, y1 = 3 - 2*x + rnorm(100), y2 = -4+5*x+rnorm(100))
+}
+dat &lt;- as_tibble(bind_cols(dat, tibble(dat=d))) %&gt;% unnest()
+knitr::kable(head(dat), digits=3, format=&#39;html&#39;)</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Var1
+</th>
+<th style="text-align:right;">
+Var2
+</th>
+<th style="text-align:right;">
+x
+</th>
+<th style="text-align:right;">
+y1
+</th>
+<th style="text-align:right;">
+y2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.181
+</td>
+<td style="text-align:right;">
+4.260
+</td>
+<td style="text-align:right;">
+-3.005
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.785
+</td>
+<td style="text-align:right;">
+0.002
+</td>
+<td style="text-align:right;">
+-2.105
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-1.353
+</td>
+<td style="text-align:right;">
+3.171
+</td>
+<td style="text-align:right;">
+-9.157
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.983
+</td>
+<td style="text-align:right;">
+-0.714
+</td>
+<td style="text-align:right;">
+5.966
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.238
+</td>
+<td style="text-align:right;">
+0.352
+</td>
+<td style="text-align:right;">
+2.131
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.201
+</td>
+<td style="text-align:right;">
+0.627
+</td>
+<td style="text-align:right;">
+1.752
+</td>
+</tr>
+</tbody>
+</table>
+<p>Now we’re going to perform two regressions, one using <code>y1</code> and one using <code>y2</code> as the dependent variables, for each stratum defined by <code>Var1</code> and <code>Var2</code>.</p>
+<pre class="r"><code>out &lt;- dat %&gt;%
+  nest(-Var1, -Var2) %&gt;%
+  mutate(model1 = map(data, ~lm(y1~x, data=.)),
+         model2 = map(data, ~lm(y2~x, data=.)))</code></pre>
+<p>Now conceptually, all we do is tidy up the output for the models using the <code>broom</code> package, filter on the rows containg the slope information, and extract the p-values, right? Not quite….</p>
+<pre class="r"><code>library(broom)
+out_problem &lt;- out %&gt;% mutate(output1 = map(model1, ~tidy(.)),
+                              output2 = map(model2, ~tidy(.))) %&gt;%
+  select(-data, -model1, -model2) %&gt;%
+  unnest()
+names(out_problem)</code></pre>
+<pre><code>##  [1] &quot;Var1&quot;       &quot;Var2&quot;       &quot;term&quot;       &quot;estimate&quot;   &quot;std.error&quot; 
+##  [6] &quot;statistic&quot;  &quot;p.value&quot;    &quot;term1&quot;      &quot;estimate1&quot;  &quot;std.error1&quot;
+## [11] &quot;statistic1&quot; &quot;p.value1&quot;</code></pre>
+<p>We’ve got two sets of output, but with the same column names!!! This is a problem! An easy solution would be to preface the column names with the name of the response variable. I struggled with this today until I discovered the <em>secret function</em>.</p>
+<pre class="r"><code>out_nice &lt;- out %&gt;% mutate(output1 = map(model1, ~tidy(.)),
+                           output2 = map(model2, ~tidy(.)),
+                           output1 = map(output1, ~setNames(., paste(&#39;y1&#39;, names(.), sep=&#39;_&#39;))),
+                           output2 = map(output2, ~setNames(., paste(&#39;y2&#39;, names(.), sep=&#39;_&#39;)))) %&gt;%
+  select(-data, -model1, -model2) %&gt;%
+  unnest()</code></pre>
+<p>This is a compact representation of the results of both regressions by strata, and we can extract the information we would like very easily. For example, to extract the stratum-specific slope estimates:</p>
+<pre class="r"><code>out_nice %&gt;% filter(y1_term==&#39;x&#39;) %&gt;%
+  select(Var1, Var2, ends_with(&#39;estimate&#39;)) %&gt;%
+  knitr::kable(digits=3, format=&#39;html&#39;)</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Var1
+</th>
+<th style="text-align:right;">
+Var2
+</th>
+<th style="text-align:right;">
+y1_estimate
+</th>
+<th style="text-align:right;">
+y2_estimate
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-1.897
+</td>
+<td style="text-align:right;">
+5.036
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-2.000
+</td>
+<td style="text-align:right;">
+5.022
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+c
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-1.988
+</td>
+<td style="text-align:right;">
+4.888
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+d
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-2.089
+</td>
+<td style="text-align:right;">
+5.089
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+-2.052
+</td>
+<td style="text-align:right;">
+5.015
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+-1.922
+</td>
+<td style="text-align:right;">
+5.004
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+c
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+-1.936
+</td>
+<td style="text-align:right;">
+4.969
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+d
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+-1.961
+</td>
+<td style="text-align:right;">
+4.959
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+-2.043
+</td>
+<td style="text-align:right;">
+5.017
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+-2.045
+</td>
+<td style="text-align:right;">
+4.860
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+c
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+-1.996
+</td>
+<td style="text-align:right;">
+5.009
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+d
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+-1.922
+</td>
+<td style="text-align:right;">
+4.894
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+-2.000
+</td>
+<td style="text-align:right;">
+4.942
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+-2.000
+</td>
+<td style="text-align:right;">
+4.932
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+c
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+-2.033
+</td>
+<td style="text-align:right;">
+5.042
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+d
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+-2.165
+</td>
+<td style="text-align:right;">
+5.049
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+-2.094
+</td>
+<td style="text-align:right;">
+5.010
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+-1.961
+</td>
+<td style="text-align:right;">
+5.122
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+c
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+-2.106
+</td>
+<td style="text-align:right;">
+5.153
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+d
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+-1.974
+</td>
+<td style="text-align:right;">
+5.009
+</td>
+</tr>
+</tbody>
+</table>

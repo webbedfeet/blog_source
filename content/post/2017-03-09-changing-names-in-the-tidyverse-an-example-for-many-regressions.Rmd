@@ -1,0 +1,73 @@
+---
+title: 'Changing names in the tidyverse: An example for many regressions'
+author: Abhijit Dasgupta
+date: '2017-03-09'
+categories:
+  - R
+slug: changing-names-in-the-tidyverse-an-example-for-many-regressions
+---
+
+A collaborator posed an interesting R question to me today. She wanted to do
+several regressions using different outcomes, with models being computed on
+different strata defined by a combination of experimental design variables. She then just wanted to extract the p-values for the slopes for each of the models, and then
+filter the strata based on p-value levels.
+
+This seems straighforward, right? Let's set up a toy example:
+
+
+```{r, output='asis', message=FALSE}
+library(tidyverse)
+
+dat <- as_tibble(expand.grid(letters[1:4], 1:5))
+d <- vector('list', nrow(dat))
+set.seed(102)
+for(i in 1:nrow(dat)){
+  x <- rnorm(100)
+  d[[i]] <- tibble(x = x, y1 = 3 - 2*x + rnorm(100), y2 = -4+5*x+rnorm(100))
+}
+dat <- as_tibble(bind_cols(dat, tibble(dat=d))) %>% unnest()
+knitr::kable(head(dat), digits=3, format='html')
+```
+
+
+
+Now we're going to perform two regressions, one using `y1` and one using `y2` as the dependent variables, for each stratum defined by `Var1` and `Var2`.
+
+```{r}
+out <- dat %>%
+  nest(-Var1, -Var2) %>%
+  mutate(model1 = map(data, ~lm(y1~x, data=.)),
+         model2 = map(data, ~lm(y2~x, data=.)))
+```
+
+Now conceptually, all we do is tidy up the output for the models using the `broom` package, filter on the rows containg the slope information, and extract the p-values, right? Not quite....
+
+```{r}
+library(broom)
+out_problem <- out %>% mutate(output1 = map(model1, ~tidy(.)),
+                              output2 = map(model2, ~tidy(.))) %>%
+  select(-data, -model1, -model2) %>%
+  unnest()
+names(out_problem)
+```
+
+
+We've got two sets of output, but with the same column names!!! This is a problem! An easy solution would be to preface the column names with the name of the response variable. I struggled with this today until I discovered the _secret function_.
+
+```{r}
+out_nice <- out %>% mutate(output1 = map(model1, ~tidy(.)),
+                           output2 = map(model2, ~tidy(.)),
+                           output1 = map(output1, ~setNames(., paste('y1', names(.), sep='_'))),
+                           output2 = map(output2, ~setNames(., paste('y2', names(.), sep='_')))) %>%
+  select(-data, -model1, -model2) %>%
+  unnest()
+```
+
+This is a compact representation of the results of both regressions by strata, and we can extract the information we would like very easily. For example, to extract the stratum-specific slope estimates:
+
+```{r}
+out_nice %>% filter(y1_term=='x') %>%
+  select(Var1, Var2, ends_with('estimate')) %>%
+  knitr::kable(digits=3, format='html')
+```
+
