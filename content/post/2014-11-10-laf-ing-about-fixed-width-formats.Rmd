@@ -2,6 +2,7 @@
 title: '"LaF"-ing about fixed width formats'
 author: Abhijit Dasgupta
 date: '2014-11-10'
+categories: ['R']
 tags:
   - R
 slug: laf-ing-about-fixed-width-formats
