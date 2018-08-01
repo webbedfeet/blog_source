@@ -1,0 +1,11 @@
+---
+title: "Joint Statistical Meetings 2018 Talk"
+author: "Abhijit Dasgupta"
+date: "8/1/2018"
+output: html_document
+---
+
+The Joint Statistical Meetings are being held in the beautiful city of 
+Vancouver, British Columbia this year. I gave a talk on data visualization this year, which is a new one for me, but an area I'm quite excited about. I've been looking into the newer toolsets using Javascript graphics for a while now for different projects, and this talk gave me a chance to coalesce my thoughts about data visualization principles and usage, and how the new toolsets can help.
+
+The slides for my talk are available <a href="https://www.dropbox.com/s/w6ffiync7n3asja/JSM18.pdf?dl=0" target=_blank>here</a>.
