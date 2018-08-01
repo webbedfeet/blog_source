@@ -1,8 +1,16 @@
 ---
-title: "Joint Statistical Meetings 2018 Talk"
-author: "Abhijit Dasgupta"
-date: "8/1/2018"
-output: html_document
+title: Joint Statistical Meetings Talk
+author: Abhijit Dasgupta
+date: '2018-08-01'
+slug: joint-statistical-meetings-talk
+categories:
+  - R
+  - Data Science
+tags:
+  - data visualization
+header:
+  caption: ''
+  image: ''
 ---
 
 The Joint Statistical Meetings are being held in the beautiful city of 
