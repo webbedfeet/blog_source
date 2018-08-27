@@ -17,8 +17,16 @@ header:
 
 <div id="context" class="section level2">
 <h2>Context</h2>
-<p>One of things I have to do quite often is create tables for papers and presentations. Often the “Table 1” of a paper has descriptives about the study, broken down by subgroups. For presentation purposes, it doesn’t look good (to me, at least) that the name of each subgroup be repeated down one column of the table.</p>
-<p>One way to deal with this is, of course, by hand. Save the table as a CSV or Excel file, open it up in your favorite spreadsheet program, and prettify things. But, of course, this being a R blog, I wanted to create a function that would fix this. I’ve created hack-y functions for this before, but a <a href="https://github.com/tidyverse/tidyr/issues/296">neat trick</a> pointed out <a href="https://www.daeconomist.com/post/2018-05-15-spread/">here</a> gave me an idea for a more elegant solution. It also meant I had to use the <a href="https://dplyr.tidyverse.org/articles/programming.html">tidyeval</a> paradigm a bit, which I figured I should at least become familiar with.</p>
+<p>One of things I have to do quite often is create tables for papers and presentations. Often the
+“Table 1” of a paper has descriptives about the study, broken down by subgroups. For presentation
+purposes, it doesn’t look good (to me, at least) that the name of each subgroup be repeated down
+one column of the table.</p>
+<p>One way to deal with this is, of course, by hand. Save the table as a CSV or Excel file, open it
+up in your favorite spreadsheet program, and prettify things. But, of course, this being a R blog,
+I wanted to create a function that would fix this. I’ve created hack-y functions for this before, but
+a <a href="https://github.com/tidyverse/tidyr/issues/296">neat trick</a> pointed out <a href="https://www.daeconomist.com/post/2018-05-15-spread/">here</a> gave me an idea for a more elegant solution.
+It also meant I had to use the <a href="https://dplyr.tidyverse.org/articles/programming.html">tidyeval</a> paradigm
+a bit, which I figured I should at least become familiar with.</p>
 </div>
 <div id="heres-what-i-want-to-do" class="section level2">
 <h2>Here’s what I want to do</h2>
@@ -86,9 +94,12 @@ header:
 </tr>
 </tbody>
 </table>
-<p>The point is that the first column has repeating values, and I just want the first row of the cluster of rows corresponding to Rural and Urban to have text, the rest being blank. I find this a cleaner look and more typical of tables I see in papers.</p>
+<p>The point is that the first column has repeating values, and I just want the first row of the
+cluster of rows corresponding to Rural and Urban to have text, the rest being blank. I find this
+a cleaner look and more typical of tables I see in papers.</p>
 <blockquote>
-<p>This is purely for presentation purposes.I would never do this for data frames I’ll still analyze, since the blank cells screw up things. Of course this could be fixed easily using last value carried forward imputation on the column.</p>
+<p>This is purely for presentation purposes.I would never do this for data frames I’ll still analyze, since the blank cells screw up things. Of
+course this could be fixed easily using last value carried forward imputation on the column.</p>
 </blockquote>
 </div>
 <div id="a-solution" class="section level2">
@@ -103,12 +114,20 @@ header:
     ungroup() %&gt;% 
     mutate_at(vars(!!colv), funs(ifelse(rown &gt; 1, &#39;&#39;, .))) %&gt;% 
     select (-rown)</code></pre>
-<p>The first thing to note here is that I’m using quosures and quasiquotation to allow the pipeline to work with the function’s inputs, specifically the column name, which is provided as an unquoted name. Admittedly this was done without much understanding, following examples on Edwin Thoen’s <a href="https://edwinth.github.io/blog/dplyr-recipes/">excellent blog</a>.</p>
-<p>The second thing was the use of the dummy <code>rown</code> column to identify the first row of each cluster of rows defined by the variable <code>colvar</code>. This was inspired by <a href="https://www.daeconomist.com/post/2018-05-15-spread/">this blog</a> I read through <a href="http://www.r-bloggers.com">R-Bloggers</a> yesterday. This trick allowed me to easily “blank out” the appropriate cells in the <code>colvar</code> column.</p>
+<p>The first thing to note here is that I’m using quosures and quasiquotation to allow the
+pipeline to work with the function’s inputs, specifically the column name, which is provided as
+an unquoted name. Admittedly this was done without much understanding, following examples on Edwin Thoen’s
+<a href="https://edwinth.github.io/blog/dplyr-recipes/">excellent blog</a>.</p>
+<p>The second thing was the use of the dummy <code>rown</code> column to identify the first row of each cluster of rows
+defined by the variable <code>colvar</code>. This was inspired by <a href="https://www.daeconomist.com/post/2018-05-15-spread/">this blog</a>
+I read through <a href="http://www.r-bloggers.com">R-Bloggers</a> yesterday. This trick allowed me to easily
+“blank out” the appropriate cells in the <code>colvar</code> column.</p>
 </div>
 <div id="desirable-updates" class="section level2">
 <h2>Desirable updates</h2>
-<p>There are two directions I want to take this, but I don’t understand <code>tidyeval</code> or functions with variable numbers of arguments well enough yet to do it. The simpler extension is to do the same process using two or more columns, rather than one column. For example, taking</p>
+<p>There are two directions I want to take this, but I don’t understand <code>tidyeval</code> or functions with variable numbers of arguments well enough yet to
+do it. The simpler extension is to do the same process using two or more columns, rather than one column. For
+example, taking</p>
 <table>
 <thead>
 <tr class="header">
@@ -507,7 +526,8 @@ header:
 </tr>
 </tbody>
 </table>
-<p>I can create these on a case-by-case basis, but I’m not sure how to do this in a function, yet. Looking forward to comments.</p>
+<p>I can create these on a case-by-case basis, but I’m not sure how to do this in a function, yet. Looking forward
+to comments.</p>
 <div id="update" class="section level3">
 <h3>Update</h3>
 <p>I can do the first example with the following code (based on Edwin Thoen’s blog, again):</p>

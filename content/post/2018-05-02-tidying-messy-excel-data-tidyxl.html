@@ -51,12 +51,12 @@ head(d2)</code></pre>
 <pre><code>## # A tibble: 6 x 21
 ##   sheet address   row   col is_blank data_type error logical numeric
 ##   &lt;chr&gt; &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;lgl&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;lgl&gt;     &lt;dbl&gt;
-## 1 T5T6  B1          1     2 FALSE    character &lt;NA&gt;  NA          NA 
-## 2 T5T6  C1          1     3 FALSE    numeric   &lt;NA&gt;  NA          44.
-## 3 T5T6  D1          1     4 FALSE    numeric   &lt;NA&gt;  NA          44.
-## 4 T5T6  E1          1     5 FALSE    numeric   &lt;NA&gt;  NA          10.
-## 5 T5T6  F1          1     6 FALSE    numeric   &lt;NA&gt;  NA          10.
-## 6 T5T6  G1          1     7 FALSE    numeric   &lt;NA&gt;  NA           3.
+## 1 T5T6  B1          1     2 FALSE    character &lt;NA&gt;  NA           NA
+## 2 T5T6  C1          1     3 FALSE    numeric   &lt;NA&gt;  NA           44
+## 3 T5T6  D1          1     4 FALSE    numeric   &lt;NA&gt;  NA           44
+## 4 T5T6  E1          1     5 FALSE    numeric   &lt;NA&gt;  NA           10
+## 5 T5T6  F1          1     6 FALSE    numeric   &lt;NA&gt;  NA           10
+## 6 T5T6  G1          1     7 FALSE    numeric   &lt;NA&gt;  NA            3
 ## # ... with 12 more variables: date &lt;dttm&gt;, character &lt;chr&gt;,
 ## #   character_formatted &lt;list&gt;, formula &lt;chr&gt;, is_array &lt;lgl&gt;,
 ## #   formula_ref &lt;chr&gt;, formula_group &lt;int&gt;, comment &lt;chr&gt;, height &lt;dbl&gt;,
@@ -132,16 +132,16 @@ cleanData2(d2)</code></pre>
 <pre><code>## # A tibble: 588 x 4
 ##    ID    angles     A     B
 ##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 10       60.  31.5 1.00 
-##  2 10       65.  31.3 1.00 
-##  3 10       70.  31.1 0.202
-##  4 10       75.  31.0 0.448
-##  5 10       80.  30.8 0.671
-##  6 10       85.  30.5 0.461
-##  7 10       90.  30.3 0.245
-##  8 10       95.  30.0 0.159
-##  9 10      100.  29.7 0.170
-## 10 10      105.  29.2 0.421
+##  1 10        60  31.5 1    
+##  2 10        65  31.3 1    
+##  3 10        70  31.1 0.202
+##  4 10        75  31.0 0.448
+##  5 10        80  30.8 0.671
+##  6 10        85  30.5 0.461
+##  7 10        90  30.3 0.245
+##  8 10        95  30.0 0.159
+##  9 10       100  29.7 0.170
+## 10 10       105  29.2 0.421
 ## # ... with 578 more rows</code></pre>
 <p>In this example, I’m using the <code>behead</code> function (available in the development version of <code>unpivotr</code> on GitHub) to extract out the three
 rows of headers. Then I’m extracting out the <code>angles</code> column separately and merging it with the rest of the columns.</p>
@@ -169,16 +169,16 @@ cleanData3(d2)</code></pre>
 <pre><code>## # A tibble: 588 x 4
 ##    ID    angles     A     B
 ##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 10       60.  31.5 1.00 
-##  2 10       65.  31.3 1.00 
-##  3 10       70.  31.1 0.202
-##  4 10       75.  31.0 0.448
-##  5 10       80.  30.8 0.671
-##  6 10       85.  30.5 0.461
-##  7 10       90.  30.3 0.245
-##  8 10       95.  30.0 0.159
-##  9 10      100.  29.7 0.170
-## 10 10      105.  29.2 0.421
+##  1 10        60  31.5 1    
+##  2 10        65  31.3 1    
+##  3 10        70  31.1 0.202
+##  4 10        75  31.0 0.448
+##  5 10        80  30.8 0.671
+##  6 10        85  30.5 0.461
+##  7 10        90  30.3 0.245
+##  8 10        95  30.0 0.159
+##  9 10       100  29.7 0.170
+## 10 10       105  29.2 0.421
 ## # ... with 578 more rows</code></pre>
 <p>I get to the same output, but with much cleaner code. This is cool!!</p>
 <p>I’m going to go deeper into the <code>unpivotr</code> documentation and see what else can be in my regular pipeline. A big thank you to the tool-makers that create these tools that make everyday activies easier and make us stay saner.</p>

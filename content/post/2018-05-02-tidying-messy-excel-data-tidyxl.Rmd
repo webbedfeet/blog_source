@@ -14,6 +14,7 @@ header:
 Well, here's what I was dealing with:
 
 ![*Exemplar Excel file from collaborator*](/img/spreadsheet1.png)
+(You can download this dataset for your playtime [here](/data/spreadsheet1.xlsx))
 
 Notice that we have 3 header rows, first with patient IDs, second with spine region, and third with variable names (A and B, to protect the innocent). 
 
