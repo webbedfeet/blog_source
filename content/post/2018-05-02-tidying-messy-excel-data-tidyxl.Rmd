@@ -13,8 +13,8 @@ header:
 
 Well, here's what I was dealing with:
 
-![*Exemplar Excel file from collaborator*](/img/spreadsheet1.png)
-(You can download this dataset for your playtime [here](/data/spreadsheet1.xlsx))
+![*Exemplar Excel file from collaborator*](https://drive.google.com/uc?id=13-A7o7BrYtLgoyDREgppFl6DC4wJfssG)
+(You can download this dataset for your playtime [here](https://drive.google.com/file/d/1ekffJQOB_p8sS7bxEBaPUHCesmFoi7s7/view?usp=sharing))
 
 Notice that we have 3 header rows, first with patient IDs, second with spine region, and third with variable names (A and B, to protect the innocent). 
 
