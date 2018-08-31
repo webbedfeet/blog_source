@@ -1,0 +1,84 @@
+---
+title: Bootstrapping correlated data
+author: Abhijit Dasgupta
+date: '2018-08-30'
+slug: bootstrapping-correlated-data-using-rsample-and-list-columns
+draft: yes
+categories:
+  - R
+  - Computation
+tags:
+  - R
+header:
+  caption: ''
+  image: ''
+---
+
+When evaluating the sampling variability of different statistics, I'll often use the 
+[bootstrap](https://en.wikipedia.org/wiki/Bootstrapping_(statistics))
+procedure to resample my data, compute the statistic on each sample, and look at the distribution of the statistic over several bootstrap samples. 
+
+In principle, the bootstrap is straightforward to do. However, if you have correlated data (like repeated measures or longitudinal data or circular data), the unit of sampling no longer is the particular data point but the second-level unit within which the data are correlated; otherwise you break the correlation structure of the data by doing a naive bootstrap and distort the resultant distributions. This procedure is often called the *cluster bootstrap*. 
+
+Let's fix ideas using a data analysis I'm currently doing. We're looking at a particular measurement taken around a spinal joint every 5 degrees. These measures are correlated within person, since the measurements share the common spine. So to bootstrap our dataset, we have to bootstrap the people and not the individual measurements. A few rows of the data are below:
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+d <- read_csv('clusterboot.csv')
+knitr::kable(head(d), align='lll')
+```
+
+The Measure variable varies from 0 to 1. The Angle variable varies between -90 and 90 by 5 degree increments.
+
+
+Doing this computation is not difficult, but it becomes really straightforward using the [`rsample`](https://tidymodels.github.io/rsample/index.html) package developed by the RStudio crew, specifically Max Kuhn and Hadley Wickham. I was recently in a workshop Max taught in DC, where he introduced me to the `rsample` package, which, conveniently, has a `bootstraps` function. Now, this function has an option `strata` that can do stratified sampling. However, that is not the right tool, since that would sample from the individual measurements, just separately sampling by stratum. What we do need is to sample by the individuals.
+
+Note that the `bootstraps` function samples rows from a data.frame or tibble object. In our situation, we need to sample *groups* of rows corresponding to each unique ID. However, we can utilize list-columns in `tibbles` to transform groups of rows into, effectively, single rows.
+
+```{r }
+D <- d %>% nest(-ID)
+head(D)
+```
+
+Now, we can use `bootstraps` on this new, compact tibble to sample by ID
+
+```{r, warning=FALSE, message=F}
+library(rsample)
+set.seed(154234)
+
+bs <- bootstraps(D, times = 10)
+bs
+```
+
+> You can read up about the `rsplit` object and how data is stored in this object [here]()
+Let's look at one of thes bootstrap samples:
+
+```{r}
+as.tibble(bs$splits[[1]]) %>% arrange(ID) %>% head()
+```
+
+Notice that some ID's are sampled multiple times, while others, not at all, which is the nature
+of bootstrap sampling.
+
+If we want to assess the bootstrap distribution of the average Measure for each Angle, we can 
+just `unnest` this tibble, and then assess the averages by Angle. This would give one bootstrap sample. 
+
+```{r}
+as.tibble(bs$splits[[1]]) %>% unnest() %>% 
+  group_by(Angle) %>% summarize(AvgMeasure = mean(Measure))
+```
+
+We can now use `purrr` functions to get the bootstrap distribution over multiple bootstrap samples, and plot the sampled summaries against Angle. 
+
+```{r}
+library(purrr)
+library(ggplot2)
+bs <- bootstraps(D, times = 100)
+bs_AvgMeasure <- map(bs$splits, ~as.tibble(.) %>% unnest %>% group_by(Angle) %>% 
+                       summarize(AvgMeasure = mean(Measure))) %>% 
+  bind_rows(.id = 'boots')
+ggplot(bs_AvgMeasure, aes(Angle, AvgMeasure, group = boots))+
+  geom_line(alpha= 0.3)+
+  theme_bw()
+```
+
