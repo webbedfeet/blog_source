@@ -1,5 +1,5 @@
 ---
-title: Bootstrapping correlated data
+title: Bootstrapping clustered data
 author: Abhijit Dasgupta
 date: '2018-08-30'
 slug: bootstrapping-correlated-data-using-rsample-and-list-columns
@@ -49,8 +49,8 @@ bs <- bootstraps(D, times = 10)
 bs
 ```
 
-> You can read up about the `rsplit` object and how data is stored in this object [here]()
-Let's look at one of thes bootstrap samples:
+> You can read up about the `rsplit` object and how data is stored in this object [here](https://tidymodels.github.io/rsample/reference/bootstraps.html).
+Let's look at one of these bootstrap samples:
 
 ```{r}
 as.tibble(bs$splits[[1]]) %>% arrange(ID) %>% head()
