@@ -1,0 +1,31 @@
+---
+title: Interchanging RMarkdown and "spinnable" R
+author: Abhijit
+date: '2018-11-13'
+slug: interchanging-rmarkdown-and-spinnable-r
+categories: []
+tags:
+  - RMarkdown
+header:
+  caption: ''
+  image: ''
+---
+
+
+
+<p>Dean Attali wrote this nice <a href="https://deanattali.com/2015/03/24/knitrs-best-hidden-gem-spin/" target="_blank">post</a> a few years ago describing <code>knitr</code>’s <code>spin</code> function. This function allows a regular R file, with comments written with the <code>roxygen2</code>-style comment tag <code>#'</code> to
+be rendered as an HTML document with the comments rendered as text and the results of
+the R code rendered in place, much as a RMarkdown document would. The basic rules for this are (from Dean’s post):</p>
+<ul>
+<li>Any line beginning with <code>#'</code> is treated as a markdown directive (<code>#' # title</code> will be a header, <code>#' some **bold** text</code> results in some <strong>bold</strong> text)</li>
+<li>Any line beginning with <code>#+</code> is parsed as code chunk options</li>
+<li>Run <code>knitr::spin</code> on the file</li>
+</ul>
+<p>In effect, this “spinnable” R script is the complement of a RMarkdown document with
+respect to format, since the RMarkdown document is primarily a text (Markdown) document with code chunks, and the R script is primarily a code document with text chunks.</p>
+<p>RMarkdown is nice when you want to create a final document to report your analysis, but can be burdensome when you’re developing code. The R script is much nicer for developing code, but it would be nice to get a nice document at the end of development without too much hassle. It turns out we can flip back and forth between the two complementary formats through functions in <code>knitr</code>, where <code>fname</code> denotes the respecive source file:</p>
+<ul>
+<li>RMarkdown to R : <code>knitr::purl(fname, documentation = 2)</code></li>
+<li>R to RMarkdown : <code>knitr::spin(fname, knit = FALSE, format = &quot;Rmd&quot;)</code></li>
+</ul>
+<p>Why would you want to convert R to RMarkdown when it renders to HTML or Word or PDF automatically (within RStudio), you ask? Because <code>spin</code> uses <code>knit2html</code>/<code>knit2pdf</code>/<code>knit</code> for rendering the documents, rather than <code>rmarkdown::render</code>, which uses the power of <a href="https://pandoc.org" target="_blank">Pandoc</a> and hence has richer options in terms of formatting. You could create a pipeline that starts with your R script, creates the intermediate Rmd file using spin, and then uses <code>rmarkdown::render</code> to create the final product.</p>

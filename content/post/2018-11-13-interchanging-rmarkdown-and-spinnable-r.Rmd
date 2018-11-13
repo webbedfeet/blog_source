@@ -1,0 +1,31 @@
+---
+title: Interchanging RMarkdown and "spinnable" R
+author: Abhijit
+date: '2018-11-13'
+slug: interchanging-rmarkdown-and-spinnable-r
+categories: []
+tags:
+  - RMarkdown
+header:
+  caption: ''
+  image: ''
+---
+
+Dean Attali wrote this nice [post](https://deanattali.com/2015/03/24/knitrs-best-hidden-gem-spin/){target="_blank"} a few years ago describing `knitr`'s `spin` function. This function allows a regular R file, with comments written with the `roxygen2`-style comment tag `#'` to
+be rendered as an HTML document with the comments rendered as text and the results of
+the R code rendered in place, much as a RMarkdown document would. The basic rules for this are (from Dean's post):
+
++ Any line beginning with `#'` is treated as a markdown directive (`#' # title` will be a header, `#' some **bold** text` results in some **bold** text)
++ Any line beginning with `#+` is parsed as code chunk options
++ Run `knitr::spin` on the file
+
+In effect, this "spinnable" R script is the complement of a RMarkdown document with 
+respect to format, since the RMarkdown document is primarily a text (Markdown) document with code chunks, and the R script is primarily a code document with text chunks. 
+
+RMarkdown is nice when you want to create a final document to report your analysis, but can be burdensome when you're developing code. The R script is much nicer for developing code, but it would be nice to get a nice document at the end of development without too much hassle. It turns out we can flip back and forth between the two complementary formats through functions in `knitr`, where `fname` denotes the respecive source file: 
+
++ RMarkdown to R : `knitr::purl(fname, documentation = 2)`
++ R to RMarkdown : `knitr::spin(fname, knit = FALSE, format = "Rmd")`
+
+Why would you want to convert R to RMarkdown when it renders to HTML or Word or PDF automatically (within RStudio), you ask? Because `spin` uses `knit2html`/`knit2pdf`/`knit` for rendering the documents, rather than `rmarkdown::render`, which uses the power of [Pandoc](https://pandoc.org){target="_blank"} and hence has richer options in terms of formatting. You could create a pipeline that starts with your R script, creates the intermediate Rmd file using spin, and then uses `rmarkdown::render` to create the final product. 
+
