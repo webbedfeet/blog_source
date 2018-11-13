@@ -3,7 +3,7 @@ title: Interchanging RMarkdown and "spinnable" R
 author: Abhijit
 date: '2018-11-13'
 slug: interchanging-rmarkdown-and-spinnable-r
-categories: []
+categories: [R]
 tags:
   - RMarkdown
 header:
