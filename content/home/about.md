@@ -34,7 +34,12 @@ weight = 5
  
 +++
 
+<p style="color: black; border:3px; border-style: solid; border-color: red; padding: 1em; background-color: wheat;">
+Abhijit is available for data science consulting and grant writing projects, as well as data science and data visualization training using R or Python. If you're interested in developing a custom training program or workshop for data analyses or visualization using R or Python, I'm happy to work with you. Drop me a line at <a href="mailto:adasgupta@araastat.com">adasgupta@araastat.com</a>!
+</p>
+
 # Biography
+
 
 Abhijit Dasgupta is an expert statistician and data scientist in the Washington DC metropolitan area. His
 primary interests lie in developing innovative modeling and visualization techniques to help understand
