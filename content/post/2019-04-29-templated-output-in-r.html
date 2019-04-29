@@ -16,7 +16,7 @@ header:
 
 
 
-<p><a href="https://twitter.com/earowang">Earo Wang</a>, who is the curator for the <a href="https://twitter.com/WeAreRLadies">We are R-Ladies</a> twitter feed this week (last week of April, 2019), had a really nice tweet about using the <a href="https://cran.r-project.org/web/packages/whisker/index.html"><em>whisker</em></a> package to create a template incorporating text and data in R. Her example created a list of <a href="http://www.tidyverse.org">tidyverse</a> packages with descriptions.</p>
+<p><a href="https://twitter.com/earowang">Earo Wang</a>, who is the curator for the <a href="https://twitter.com/WeAreRLadies">We are R-Ladies</a> twitter feed this week (last week of April, 2019), had a <a href="https://twitter.com/WeAreRLadies/status/1122816061164797953">really nice tweet</a> about using the <a href="https://cran.r-project.org/web/packages/whisker/index.html"><em>whisker</em></a> package to create a template incorporating text and data in R. Her example created a list of <a href="http://www.tidyverse.org">tidyverse</a> packages with descriptions.</p>
 <p>I really liked the example, but thought that the <a href="https://cran.r-project.org/web/packages/glue/index.html">glue</a> package might be able to do the same thing. I used Earo’s code to generate a tibble with the package names and descriptions, and <code>glue_data</code> to create the templated list.</p>
 <pre class="r"><code>library(tidyverse)
 library(glue)
