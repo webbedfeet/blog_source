@@ -24,9 +24,11 @@ library(glue)
 tidy_pkgs <- 
   tibble('pkgs' = c('ggplot2','purrr','readr','tidyr',
                     'dplyr','forcats','lubridate','stringr')) %>% 
-  mutate(descr = map_chr(pkgs, ~packageDescription(., fields='Description')))
+  mutate(
+    version = map_chr(pkgs, ~packageDescription(., fields='Version')),
+    descr = map_chr(pkgs, ~packageDescription(., fields='Description')))
 
 glue_data(tidy_pkgs, 
-          "- [**{pkgs}**](http://{pkgs}.tidyverse.org): {descr}")
+          "- [**{pkgs}**](http://{pkgs}.tidyverse.org) ({version}): {descr}")
 ```
 
