@@ -1,0 +1,30 @@
+---
+title: Finding my Dropbox in R
+author: Abhijit Dasgupta
+date: '2017-07-05'
+categories:
+  - R
+slug: finding-my-dropbox-in-r
+---
+
+
+
+<p>I’ll often keep non-sensitive data on Dropbox so that I can access it on all my machines without gumming up git. I just wrote a small script to find the Dropbox location on each of my computers automatically. The crucial information is available <a href="https://www.dropbox.com/help/desktop-web/find-folder-paths">here</a>, from Dropbox.</p>
+<p>My small snippet of code is the following:</p>
+<pre class="r"><code>if (Sys.info()[&#39;sysname&#39;] == &#39;Darwin&#39;) {
+  info &lt;- RJSONIO::fromJSON(
+    file.path(path.expand(&quot;~&quot;),&#39;.dropbox&#39;,&#39;info.json&#39;))
+}
+if (Sys.info()[&#39;sysname&#39;] == &#39;Windows&#39;) {
+  info &lt;- RJSONIO::fromJSON(
+    if (file.exists(file.path(Sys.getenv(&#39;APPDATA&#39;), &#39;Dropbox&#39;,&#39;info.json&#39;))) {
+      file.path(Sys.getenv(&#39;APPDATA&#39;), &#39;Dropbox&#39;, &#39;info.json&#39;)
+    } else {
+      file.path(Sys.getenv(&#39;LOCALAPPDATA&#39;),&#39;Dropbox&#39;,&#39;info.json&#39;)
+    }
+  )
+}
+
+dropbox_base &lt;- info$personal$path</code></pre>
+<p>I haven’t included the Linux option since I don’t really use a Linux box, but the Dropbox link above will show you where the info.json file lies in Linux. Also, if you have a business Dropbox account, you’ll probably need <code>info$business$path</code>.</p>
+<p>Hope this helps!!!</p>

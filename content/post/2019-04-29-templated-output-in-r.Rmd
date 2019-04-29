@@ -1,0 +1,32 @@
+---
+title: Templated output in R
+author: Abhijit Dasgupta
+date: '2019-04-29'
+slug: templated-output-in-r
+categories:
+  - R
+tags:
+  - reporting
+  - templates
+header:
+  caption: ''
+  image: ''
+  preview: yes
+---
+
+[Earo Wang](https://twitter.com/earowang), who is the curator for the [We are R-Ladies](https://twitter.com/WeAreRLadies) twitter feed this week (last week of April, 2019), had a really nice tweet about using the [_whisker_](https://cran.r-project.org/web/packages/whisker/index.html) package to create a template incorporating text and data in R. Her example created a list of [tidyverse](http://www.tidyverse.org) packages with descriptions. 
+
+I really liked the example, but thought that the [glue](https://cran.r-project.org/web/packages/glue/index.html) package might be able to do the same thing. I used Earo's code to generate a tibble with the package names and descriptions, and `glue_data` to create the templated list. 
+
+```{r, results = 'asis', message=F, warning=F}
+library(tidyverse)
+library(glue)
+tidy_pkgs <- 
+  tibble('pkgs' = c('ggplot2','purrr','readr','tidyr',
+                    'dplyr','forcats','lubridate','stringr')) %>% 
+  mutate(descr = map_chr(pkgs, ~packageDescription(., fields='Description')))
+
+glue_data(tidy_pkgs, 
+          "- [**{pkgs}**](http://{pkgs}.tidyverse.org): {descr}")
+```
+

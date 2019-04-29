@@ -11,7 +11,7 @@ I'll often keep non-sensitive data on Dropbox so that I can access it on all my 
 
 My small snippet of code is the following:
 
-```r
+```{r}
 if (Sys.info()['sysname'] == 'Darwin') {
   info <- RJSONIO::fromJSON(
     file.path(path.expand("~"),'.dropbox','info.json'))

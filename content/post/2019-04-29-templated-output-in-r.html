@@ -1,0 +1,64 @@
+---
+title: Templated output in R
+author: Abhijit Dasgupta
+date: '2019-04-29'
+slug: templated-output-in-r
+categories:
+  - R
+tags:
+  - reporting
+  - templates
+header:
+  caption: ''
+  image: ''
+  preview: yes
+---
+
+
+
+<p><a href="https://twitter.com/earowang">Earo Wang</a>, who is the curator for the <a href="https://twitter.com/WeAreRLadies">We are R-Ladies</a> twitter feed this week (last week of April, 2019), had a really nice tweet about using the <a href="https://cran.r-project.org/web/packages/whisker/index.html"><em>whisker</em></a> package to create a template incorporating text and data in R. Her example created a list of <a href="http://www.tidyverse.org">tidyverse</a> packages with descriptions.</p>
+<p>I really liked the example, but thought that the <a href="https://cran.r-project.org/web/packages/glue/index.html">glue</a> package might be able to do the same thing. I used Earo’s code to generate a tibble with the package names and descriptions, and <code>glue_data</code> to create the templated list.</p>
+<pre class="r"><code>library(tidyverse)
+library(glue)
+tidy_pkgs &lt;- 
+  tibble(&#39;pkgs&#39; = c(&#39;ggplot2&#39;,&#39;purrr&#39;,&#39;readr&#39;,&#39;tidyr&#39;,
+                    &#39;dplyr&#39;,&#39;forcats&#39;,&#39;lubridate&#39;,&#39;stringr&#39;)) %&gt;% 
+  mutate(descr = map_chr(pkgs, ~packageDescription(., fields=&#39;Description&#39;)))
+
+glue_data(tidy_pkgs, 
+          &quot;- [**{pkgs}**](http://{pkgs}.tidyverse.org): {descr}&quot;)</code></pre>
+<ul>
+<li><a href="http://ggplot2.tidyverse.org"><strong>ggplot2</strong></a>: A system for ‘declaratively’ creating graphics,
+based on “The Grammar of Graphics”. You provide the data, tell ‘ggplot2’
+how to map variables to aesthetics, what graphical primitives to use,
+and it takes care of the details.</li>
+<li><a href="http://purrr.tidyverse.org"><strong>purrr</strong></a>: A complete and consistent functional programming toolkit for R.</li>
+<li><a href="http://readr.tidyverse.org"><strong>readr</strong></a>: The goal of ‘readr’ is to provide a fast and friendly way to read
+rectangular data (like ‘csv’, ‘tsv’, and ‘fwf’). It is designed to flexibly
+parse many types of data found in the wild, while still cleanly failing when
+data unexpectedly changes.</li>
+<li><a href="http://tidyr.tidyverse.org"><strong>tidyr</strong></a>: An evolution of ‘reshape2’. It’s designed
+specifically for data tidying (not general reshaping or aggregating)
+and works well with ‘dplyr’ data pipelines.</li>
+<li><a href="http://dplyr.tidyverse.org"><strong>dplyr</strong></a>: A fast, consistent tool for working with data frame like objects,
+both in memory and out of memory.</li>
+<li><a href="http://forcats.tidyverse.org"><strong>forcats</strong></a>: Helpers for reordering factor levels (including
+moving specified levels to front, ordering by first appearance,
+reversing, and randomly shuffling), and tools for modifying factor
+levels (including collapsing rare levels into other, ‘anonymising’,
+and manually ‘recoding’).</li>
+<li><a href="http://lubridate.tidyverse.org"><strong>lubridate</strong></a>: Functions to work with date-times and time-spans: fast and user
+friendly parsing of date-time data, extraction and updating of components of
+a date-time (years, months, days, hours, minutes, and seconds), algebraic
+manipulation on date-time and time-span objects. The ‘lubridate’ package has
+a consistent and memorable syntax that makes working with dates easy and
+fun.
+Parts of the ‘CCTZ’ source code, released under the Apache 2.0 License,
+are included in this package. See <a href="https://github.com/google/cctz" class="uri">https://github.com/google/cctz</a> for more
+details.</li>
+<li><a href="http://stringr.tidyverse.org"><strong>stringr</strong></a>: A consistent, simple and easy to use set of
+wrappers around the fantastic ‘stringi’ package. All function and
+argument names (and positions) are consistent, all functions deal with
+“NA”’s and zero length vectors in the same way, and the output from
+one function is easy to feed into the input of another.</li>
+</ul>
