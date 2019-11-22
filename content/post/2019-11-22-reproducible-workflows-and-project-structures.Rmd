@@ -1,0 +1,22 @@
+---
+title: Reproducible workflows and project structures
+author: Abhijit
+date: '2019-11-22'
+slug: reproducible-workflows-and-project-structures
+categories: []
+tags: []
+header:
+  caption: ''
+  image: ''
+  preview: yes
+---
+
+This is just a quick post to store web resources about project structure and reproducible workflows in data science.
+
+## Project structure
+
++ [Cookie Cutter Data Science](https://drivendata.github.io/cookiecutter-data-science/): A Python-based project structure
++ [ProjectTemplate](http://projecttemplate.net/index.html): The granddaddy in R
++ This [blog post](https://nicercode.github.io/blog/2013-04-05-projects/) by Rich FitzJohn
++ [Carl Boettiger's](https://www.carlboettiger.info/2012/05/06/research-workflow.html) workflow
++ [A Quick Guide to Organizing Computational Biology Projects](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000424#s7)

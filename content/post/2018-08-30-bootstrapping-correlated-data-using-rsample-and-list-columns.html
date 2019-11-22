@@ -68,7 +68,7 @@ procedure to resample my data, compute the statistic on each sample, and look at
 head(D)</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ##      ID data             
-##   &lt;int&gt; &lt;list&gt;           
+##   &lt;dbl&gt; &lt;list&gt;           
 ## 1    16 &lt;tibble [37 × 2]&gt;
 ## 2    22 &lt;tibble [37 × 2]&gt;
 ## 3    38 &lt;tibble [37 × 2]&gt;
@@ -83,26 +83,28 @@ bs &lt;- bootstraps(D, times = 10)
 bs</code></pre>
 <pre><code>## # Bootstrap sampling 
 ## # A tibble: 10 x 2
-##    splits       id         
-##    &lt;list&gt;       &lt;chr&gt;      
-##  1 &lt;S3: rsplit&gt; Bootstrap01
-##  2 &lt;S3: rsplit&gt; Bootstrap02
-##  3 &lt;S3: rsplit&gt; Bootstrap03
-##  4 &lt;S3: rsplit&gt; Bootstrap04
-##  5 &lt;S3: rsplit&gt; Bootstrap05
-##  6 &lt;S3: rsplit&gt; Bootstrap06
-##  7 &lt;S3: rsplit&gt; Bootstrap07
-##  8 &lt;S3: rsplit&gt; Bootstrap08
-##  9 &lt;S3: rsplit&gt; Bootstrap09
-## 10 &lt;S3: rsplit&gt; Bootstrap10</code></pre>
+##    splits          id         
+##    &lt;list&gt;          &lt;chr&gt;      
+##  1 &lt;split [35/13]&gt; Bootstrap01
+##  2 &lt;split [35/13]&gt; Bootstrap02
+##  3 &lt;split [35/14]&gt; Bootstrap03
+##  4 &lt;split [35/12]&gt; Bootstrap04
+##  5 &lt;split [35/13]&gt; Bootstrap05
+##  6 &lt;split [35/11]&gt; Bootstrap06
+##  7 &lt;split [35/12]&gt; Bootstrap07
+##  8 &lt;split [35/11]&gt; Bootstrap08
+##  9 &lt;split [35/12]&gt; Bootstrap09
+## 10 &lt;split [35/14]&gt; Bootstrap10</code></pre>
 <blockquote>
 <p>You can read up about the <code>rsplit</code> object and how data is stored in this object <a href="https://tidymodels.github.io/rsample/reference/bootstraps.html">here</a>.
 Let’s look at one of these bootstrap samples:</p>
 </blockquote>
 <pre class="r"><code>as.tibble(bs$splits[[1]]) %&gt;% arrange(ID) %&gt;% head()</code></pre>
+<pre><code>## Warning: `as.tibble()` is deprecated, use `as_tibble()` (but mind the new semantics).
+## This warning is displayed once per session.</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ##      ID data             
-##   &lt;int&gt; &lt;list&gt;           
+##   &lt;dbl&gt; &lt;list&gt;           
 ## 1     2 &lt;tibble [37 × 2]&gt;
 ## 2     7 &lt;tibble [37 × 2]&gt;
 ## 3     8 &lt;tibble [37 × 2]&gt;
@@ -117,7 +119,7 @@ just <code>unnest</code> this tibble, and then assess the averages by Angle. Thi
   group_by(Angle) %&gt;% summarize(AvgMeasure = mean(Measure))</code></pre>
 <pre><code>## # A tibble: 37 x 2
 ##    Angle AvgMeasure
-##    &lt;int&gt;      &lt;dbl&gt;
+##    &lt;dbl&gt;      &lt;dbl&gt;
 ##  1   -90      0.596
 ##  2   -85      0.557
 ##  3   -80      0.539
@@ -128,7 +130,7 @@ just <code>unnest</code> this tibble, and then assess the averages by Angle. Thi
 ##  8   -55      0.480
 ##  9   -50      0.439
 ## 10   -45      0.383
-## # ... with 27 more rows</code></pre>
+## # … with 27 more rows</code></pre>
 <p>We can now use <code>purrr</code> functions to get the bootstrap distribution over multiple bootstrap samples, and plot the sampled summaries against Angle.</p>
 <pre class="r"><code>library(purrr)
 library(ggplot2)

@@ -1,0 +1,33 @@
+---
+title: Cleaning a complex Excel table
+author: Abhijit
+date: '2019-05-07'
+slug: cleaning-a-complex-excel-table
+draft: true
+categories:
+  - R
+tags:
+  - data cleaning
+header:
+  caption: ''
+  image: ''
+  preview: yes
+---
+
+Recently, while preparing to teach a workshop, I came across some old government data stored in Excel that I wanted to use as an example of cleaning complex tables using R. This data was the average daily attendance as a percentage of total enrollment, school day length, and school year length in public schools, by school level and state during the school year 2007-2008[^1]. Typical of many government tables, this table has multiple headers, extraneous text and merged data fields. In other words, it was anything but tidy; see below: 
+
+![](https://drive.google.com/uc?id=1Bo0BFAWFK5AyVmcTjilTjMqGe6Eu2H0G)
+
+There are several obvious issues with this table:
+
+1. Table title in first row
+1. Multiple headers formed by merged cells
+1. Extraneous row 4
+1. Extraneous dots in state names
+1. Means and standard errors laid out contiguously with no headers
+1. Presence of footnotes
+
+As I have shown [before](../tidying-messy-excel-data-tidyxl/), this kind of table cannot be read in to R using `read_excel` or other standard methods. The tools of choice here are the [`tidyxl`](https://CRAN.R-project.org/package=tidyxl) and [`unpivotr`](https://CRAN.R-project.org/package=unpivotr) packages by [Duncan Garmonsway](https://github.com/nacnudus). 
+[^1]: Source: U.S. Department of Education, National Center for Education Statistics, Schools and Staffing Survey (SASS), "Public School Questionnaire," 2003-04 and 2007-08. (This table was prepared June 2011.)
+
+
