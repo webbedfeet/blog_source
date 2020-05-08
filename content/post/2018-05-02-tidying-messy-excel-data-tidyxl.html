@@ -25,21 +25,29 @@ four-column data set with ID, angle, A and B.</p>
 </div>
 <div id="attempt-1-readxl" class="section level2">
 <h2>Attempt 1 (readxl)</h2>
-<pre class="r"><code>d1 &lt;- readxl::read_excel(&#39;spreadsheet1.xlsx&#39;)
-head(d1)</code></pre>
+<pre class="r"><code>d1 &lt;- readxl::read_excel(&#39;spreadsheet1.xlsx&#39;)</code></pre>
+<pre><code>## New names:
+## * `` -&gt; ...1
+## * `44` -&gt; `44...3`
+## * `44` -&gt; `44...4`
+## * `10` -&gt; `10...5`
+## * `10` -&gt; `10...6`
+## * … and 20 more problems</code></pre>
+<pre class="r"><code>head(d1)</code></pre>
 <pre><code>## # A tibble: 6 x 26
-##   X__1  patient `44`  `44__1` `10`  `10__1` `3`   `3__1` `53`  `53__1`
-##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  
-## 1 &lt;NA&gt;  IDS     T5/T6 T5/T6   T5/T6 T5/T6   T5/T6 T5/T6  T5/T6 T5/T6  
-## 2 angl… &lt;NA&gt;    A     B       A     B       A     B      A     B      
-## 3 60    &lt;NA&gt;    31.8… 1       31.5… 1       32.9… 0      31.8… 0      
-## 4 65    &lt;NA&gt;    31.6… 1       31.3… 1       32.2… 0      32.3… 0      
-## 5 70    &lt;NA&gt;    31.4… 1       31.0… 0.2020… 31.7… 0      32.5… 0      
-## 6 75    &lt;NA&gt;    31.0… 1       30.9… 0.4483… 31.2… 8.641… 32.3… 1      
-## # ... with 16 more variables: `2` &lt;chr&gt;, `2__1` &lt;chr&gt;, `8` &lt;chr&gt;,
-## #   `8__1` &lt;chr&gt;, `6` &lt;chr&gt;, `6__1` &lt;chr&gt;, `43` &lt;chr&gt;, `43__1` &lt;chr&gt;,
-## #   `48` &lt;chr&gt;, `48__1` &lt;chr&gt;, `46` &lt;chr&gt;, `46__1` &lt;chr&gt;, `4` &lt;chr&gt;,
-## #   `4__1` &lt;chr&gt;, `9` &lt;chr&gt;, `9__1` &lt;chr&gt;</code></pre>
+##   ...1  patient `44...3` `44...4` `10...5` `10...6` `3...7` `3...8`
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;  
+## 1 &lt;NA&gt;  IDS     T5/T6    T5/T6    T5/T6    T5/T6    T5/T6   T5/T6  
+## 2 angl… &lt;NA&gt;    A        B        A        B        A       B      
+## 3 60    &lt;NA&gt;    31.8313… 1        31.5286… 1        32.927… 0      
+## 4 65    &lt;NA&gt;    31.6696… 1        31.3347… 1        32.230… 0      
+## 5 70    &lt;NA&gt;    31.4510… 1        31.0927… 0.20200… 31.736… 0      
+## 6 75    &lt;NA&gt;    31.0815… 1        30.9607… 0.44831… 31.204… 8.6413…
+## # … with 18 more variables: `53...9` &lt;chr&gt;, `53...10` &lt;chr&gt;,
+## #   `2...11` &lt;chr&gt;, `2...12` &lt;chr&gt;, `8...13` &lt;chr&gt;, `8...14` &lt;chr&gt;,
+## #   `6...15` &lt;chr&gt;, `6...16` &lt;chr&gt;, `43...17` &lt;chr&gt;, `43...18` &lt;chr&gt;,
+## #   `48...19` &lt;chr&gt;, `48...20` &lt;chr&gt;, `46...21` &lt;chr&gt;, `46...22` &lt;chr&gt;,
+## #   `4...23` &lt;chr&gt;, `4...24` &lt;chr&gt;, `9...25` &lt;chr&gt;, `9...26` &lt;chr&gt;</code></pre>
 <p>This strategy gives us funky column names, and pushes two of the headers into data rows. Since the headers are in rows, they’re a little harder to extract and work with. More worrisome is the fact that since the headers leaked into the data rows, the columns are all of type <code>character</code> rather than type <code>numeric</code>, which would now require further careful conversion after cleaning. So I don’t think <code>readxl</code> is the way to go here, if there’s a better solution.</p>
 </div>
 <div id="attempt-2-tidyxl" class="section level2">
@@ -55,7 +63,7 @@ head(d2)</code></pre>
 ## 4 T5T6  E1          1     5 FALSE    numeric   &lt;NA&gt;  NA           10
 ## 5 T5T6  F1          1     6 FALSE    numeric   &lt;NA&gt;  NA           10
 ## 6 T5T6  G1          1     7 FALSE    numeric   &lt;NA&gt;  NA            3
-## # ... with 12 more variables: date &lt;dttm&gt;, character &lt;chr&gt;,
+## # … with 12 more variables: date &lt;dttm&gt;, character &lt;chr&gt;,
 ## #   character_formatted &lt;list&gt;, formula &lt;chr&gt;, is_array &lt;lgl&gt;,
 ## #   formula_ref &lt;chr&gt;, formula_group &lt;int&gt;, comment &lt;chr&gt;, height &lt;dbl&gt;,
 ## #   width &lt;dbl&gt;, style_format &lt;chr&gt;, local_format_id &lt;int&gt;</code></pre>
@@ -140,7 +148,7 @@ cleanData2(d2)</code></pre>
 ##  8 10        95  30.0 0.159
 ##  9 10       100  29.7 0.170
 ## 10 10       105  29.2 0.421
-## # ... with 578 more rows</code></pre>
+## # … with 578 more rows</code></pre>
 <p>In this example, I’m using the <code>behead</code> function (available in the development version of <code>unpivotr</code> on GitHub) to extract out the three
 rows of headers. Then I’m extracting out the <code>angles</code> column separately and merging it with the rest of the columns.</p>
 <blockquote>
@@ -177,7 +185,7 @@ cleanData3(d2)</code></pre>
 ##  8 10        95  30.0 0.159
 ##  9 10       100  29.7 0.170
 ## 10 10       105  29.2 0.421
-## # ... with 578 more rows</code></pre>
+## # … with 578 more rows</code></pre>
 <p>I get to the same output, but with much cleaner code. This is cool!!</p>
 <p>I’m going to go deeper into the <code>unpivotr</code> documentation and see what else can be in my regular pipeline. A big thank you to the tool-makers that create these tools that make everyday activies easier and make us stay saner.</p>
 </div>

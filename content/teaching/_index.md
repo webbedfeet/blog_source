@@ -21,8 +21,8 @@ caption = ""
 I am currently co-chair of the Department of Bioinformatics and Data Science at the 
 [FAES Graduate School](https://faes.org/content/graduate-school) at NIH. I currently teach two courses there:
 
-- BIOF339: Practical R (co-taught with Eugen Buehler) [Fall semester]
-- BIOF449: Data Visualization with R [Spring semester from 2019]
+- [BIOF339: Practical R](https://www.araastat.com/BIOF339/) [Fall semester]
+- [BIOF449: Data Visualization with R](https://www.araastat.com/BIOF439) [Spring semester from 2019]
 
 I also teach workshops, continuing education courses and corporate training in R, Python, Machine Learning
 and best practices. 
@@ -31,8 +31,7 @@ and best practices.
 
 **Reviewer**
 
-- Biostatistician on National Institute of Mental Health's Data Safety Monitoring Boards (DSMB-RAPID and 
-DSMB-C)
+- Biostatistician on National Institute of Mental Health's Data Safety Monitoring Boards (DSMB-C and DSMB-D)
 - Ad hoc reviewer for Center for Scientific Review, NIH, on SBIR review panels.
 - Journal reviewer
   - Journal of Clinical Oncology, Arthritis and Rheumatism

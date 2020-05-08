@@ -1,0 +1,31 @@
+---
+title: Cleaning a complex Excel table
+author: Abhijit
+date: '2019-05-07'
+slug: cleaning-a-complex-excel-table
+draft: true
+categories:
+  - R
+tags:
+  - data cleaning
+header:
+  caption: ''
+  image: ''
+  preview: yes
+---
+
+
+
+<p>Recently, while preparing to teach a workshop, I came across some old government data stored in Excel that I wanted to use as an example of cleaning complex tables using R. This data was the average daily attendance as a percentage of total enrollment, school day length, and school year length in public schools, by school level and state during the school year 2007-2008[^1]. Typical of many government tables, this table has multiple headers, extraneous text and merged data fields. In other words, it was anything but tidy; see below:</p>
+<p><img src="https://drive.google.com/uc?id=1Bo0BFAWFK5AyVmcTjilTjMqGe6Eu2H0G" /></p>
+<p>There are several obvious issues with this table:</p>
+<ol style="list-style-type: decimal">
+<li>Table title in first row</li>
+<li>Multiple headers formed by merged cells</li>
+<li>Extraneous row 4</li>
+<li>Extraneous dots in state names</li>
+<li>Means and standard errors laid out contiguously with no headers</li>
+<li>Presence of footnotes</li>
+</ol>
+<p>As I have shown <a href="../tidying-messy-excel-data-tidyxl/">before</a>, this kind of table cannot be read in to R using <code>read_excel</code> or other standard methods. The tools of choice here are the <a href="https://CRAN.R-project.org/package=tidyxl"><code>tidyxl</code></a> and <a href="https://CRAN.R-project.org/package=unpivotr"><code>unpivotr</code></a> packages by <a href="https://github.com/nacnudus">Duncan Garmonsway</a>.
+[^1]: Source: U.S. Department of Education, National Center for Education Statistics, Schools and Staffing Survey (SASS), “Public School Questionnaire,” 2003-04 and 2007-08. (This table was prepared June 2011.)</p>
