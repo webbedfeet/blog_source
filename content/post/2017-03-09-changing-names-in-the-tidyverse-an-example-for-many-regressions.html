@@ -14,17 +14,20 @@ several regressions using different outcomes, with models being computed on
 different strata defined by a combination of experimental design variables. She then just wanted to extract the p-values for the slopes for each of the models, and then
 filter the strata based on p-value levels.</p>
 <p>This seems straighforward, right? Let’s set up a toy example:</p>
-<pre class="r"><code>library(tidyverse)
-
-dat &lt;- as_tibble(expand.grid(letters[1:4], 1:5))
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 3.6.2</code></pre>
+<pre><code>## Warning: package &#39;purrr&#39; was built under R version 3.6.2</code></pre>
+<pre class="r"><code>dat &lt;- as_tibble(expand.grid(letters[1:4], 1:5))
 d &lt;- vector(&#39;list&#39;, nrow(dat))
 set.seed(102)
 for(i in 1:nrow(dat)){
   x &lt;- rnorm(100)
   d[[i]] &lt;- tibble(x = x, y1 = 3 - 2*x + rnorm(100), y2 = -4+5*x+rnorm(100))
 }
-dat &lt;- as_tibble(bind_cols(dat, tibble(dat=d))) %&gt;% unnest()
-knitr::kable(head(dat), digits=3, format=&#39;html&#39;)</code></pre>
+dat &lt;- as_tibble(bind_cols(dat, tibble(dat=d))) %&gt;% unnest()</code></pre>
+<pre><code>## Warning: `cols` is now required.
+## Please use `cols = c(dat)`</code></pre>
+<pre class="r"><code>knitr::kable(head(dat), digits=3, format=&#39;html&#39;)</code></pre>
 <table>
 <thead>
 <tr>
@@ -155,13 +158,17 @@ a
   nest(-Var1, -Var2) %&gt;%
   mutate(model1 = map(data, ~lm(y1~x, data=.)),
          model2 = map(data, ~lm(y2~x, data=.)))</code></pre>
+<pre><code>## Warning: All elements of `...` must be named.
+## Did you want `data = c(x, y1, y2)`?</code></pre>
 <p>Now conceptually, all we do is tidy up the output for the models using the <code>broom</code> package, filter on the rows containg the slope information, and extract the p-values, right? Not quite….</p>
 <pre class="r"><code>library(broom)
 out_problem &lt;- out %&gt;% mutate(output1 = map(model1, ~tidy(.)),
                               output2 = map(model2, ~tidy(.))) %&gt;%
   select(-data, -model1, -model2) %&gt;%
-  unnest()
-names(out_problem)</code></pre>
+  unnest()</code></pre>
+<pre><code>## Warning: `cols` is now required.
+## Please use `cols = c(output1, output2)`</code></pre>
+<pre class="r"><code>names(out_problem)</code></pre>
 <pre><code>##  [1] &quot;Var1&quot;       &quot;Var2&quot;       &quot;term&quot;       &quot;estimate&quot;   &quot;std.error&quot; 
 ##  [6] &quot;statistic&quot;  &quot;p.value&quot;    &quot;term1&quot;      &quot;estimate1&quot;  &quot;std.error1&quot;
 ## [11] &quot;statistic1&quot; &quot;p.value1&quot;</code></pre>
@@ -172,6 +179,8 @@ names(out_problem)</code></pre>
                            output2 = map(output2, ~setNames(., paste(&#39;y2&#39;, names(.), sep=&#39;_&#39;)))) %&gt;%
   select(-data, -model1, -model2) %&gt;%
   unnest()</code></pre>
+<pre><code>## Warning: `cols` is now required.
+## Please use `cols = c(output1, output2)`</code></pre>
 <p>This is a compact representation of the results of both regressions by strata, and we can extract the information we would like very easily. For example, to extract the stratum-specific slope estimates:</p>
 <pre class="r"><code>out_nice %&gt;% filter(y1_term==&#39;x&#39;) %&gt;%
   select(Var1, Var2, ends_with(&#39;estimate&#39;)) %&gt;%
