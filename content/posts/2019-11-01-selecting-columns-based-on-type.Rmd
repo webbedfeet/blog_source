@@ -1,0 +1,14 @@
+---
+title: Selecting columns based on type
+author: Abhijit
+date: '2019-11-01'
+slug: selecting-columns-based-on-type
+categories:
+  - R
+  - Data Science
+tags: []
+header:
+  caption: ''
+  image: ''
+---
+

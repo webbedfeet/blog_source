@@ -1,0 +1,56 @@
+---
+title: Selecting columns based on type
+author: Abhijit
+date: '2019-11-01'
+slug: selecting-columns-based-on-type
+categories:
+  - R
+  - Data Science
+tags:
+  - Data Science
+header:
+  caption: ''
+  image: ''
+  preview: yes
+---
+
+The `tidyverse` and, in particular, `dplyr`, provides functions to select columns
+from a data frame. There are three *scoped functions* available: `select_all`, `select_if` and `select_at`. In this post, we'll look at a particular application of
+`select_if`, i.e., capturing the names of numeric variables.
+
+A quick search using Google finds a few solutions to this problem. As an example data set, I'll use the `diamonds` data set from the `ggplot2` package.
+
+```{r setup, include=F}
+library(tidyverse)
+```
+
+
+```{r}
+names(diamonds)[sapply(diamonds, is.numeric)]
+```
+ 
+or, equivalently
+
+```{r}
+names(diamonds)[map_lgl(diamonds, is.numeric)]
+```
+
+However, there is an elegant (to me) pipeline based solution using `select_if`.
+
+```{r}
+diamonds %>% select_if(is.numeric) %>% names()
+```
+
+However, the elegance is at the expense of some efficiency.
+
+```{r}
+library(microbenchmark)
+microbenchmark(names(diamonds)[sapply(diamonds, is.numeric)],
+               names(diamonds)[map_lgl(diamonds, is.numeric)],
+               diamonds %>% select_if(is.numeric) %>% names()) %>% 
+  autoplot()
+
+```
+
+The piped version is almost 50 times slower. 
+

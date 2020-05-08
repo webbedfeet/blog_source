@@ -1,0 +1,38 @@
+---
+title: Selecting columns based on type
+author: Abhijit
+date: '2019-11-01'
+slug: selecting-columns-based-on-type
+categories:
+  - R
+  - Data Science
+tags:
+  - Data Science
+header:
+  caption: ''
+  image: ''
+  preview: yes
+---
+
+
+
+<p>The <code>tidyverse</code> and, in particular, <code>dplyr</code>, provides functions to select columns
+from a data frame. There are three <em>scoped functions</em> available: <code>select_all</code>, <code>select_if</code> and <code>select_at</code>. In this post, we’ll look at a particular application of
+<code>select_if</code>, i.e., capturing the names of numeric variables.</p>
+<p>A quick search using Google finds a few solutions to this problem. As an example data set, I’ll use the <code>diamonds</code> data set from the <code>ggplot2</code> package.</p>
+<pre class="r"><code>names(diamonds)[sapply(diamonds, is.numeric)]</code></pre>
+<pre><code>## [1] &quot;carat&quot; &quot;depth&quot; &quot;table&quot; &quot;price&quot; &quot;x&quot;     &quot;y&quot;     &quot;z&quot;</code></pre>
+<p>or, equivalently</p>
+<pre class="r"><code>names(diamonds)[map_lgl(diamonds, is.numeric)]</code></pre>
+<pre><code>## [1] &quot;carat&quot; &quot;depth&quot; &quot;table&quot; &quot;price&quot; &quot;x&quot;     &quot;y&quot;     &quot;z&quot;</code></pre>
+<p>However, there is an elegant (to me) pipeline based solution using <code>select_if</code>.</p>
+<pre class="r"><code>diamonds %&gt;% select_if(is.numeric) %&gt;% names()</code></pre>
+<pre><code>## [1] &quot;carat&quot; &quot;depth&quot; &quot;table&quot; &quot;price&quot; &quot;x&quot;     &quot;y&quot;     &quot;z&quot;</code></pre>
+<p>However, the elegance is at the expense of some efficiency.</p>
+<pre class="r"><code>library(microbenchmark)
+microbenchmark(names(diamonds)[sapply(diamonds, is.numeric)],
+               names(diamonds)[map_lgl(diamonds, is.numeric)],
+               diamonds %&gt;% select_if(is.numeric) %&gt;% names()) %&gt;% 
+  autoplot()</code></pre>
+<pre><code>## Coordinate system already present. Adding new coordinate system, which will replace the existing one.</code></pre>
+<p><img src="/post/2019-11-01-selecting-columns-based-on-type_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
