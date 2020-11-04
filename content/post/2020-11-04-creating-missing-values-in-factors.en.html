@@ -1,0 +1,59 @@
+---
+title: Creating missing values in factors
+author: Abhijit
+date: '2020-11-04'
+categories:
+  - R
+tags:
+  - data munging
+slug: creating-missing-values-in-factors
+header:
+  caption: ''
+  image: ''
+  preview: yes
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+<link href="/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>I was looking at some breast cancer data recently, and was analyzing
+the ER (estrogen receptor) status variable. It turned out that there were three possible outcomes in the data: Positive, Negative and Indeterminate. I had imported this data as a factor, and wanted to convert the Indeterminate level to a missing value, i.e. NA.</p>
+<p>My usual method for numeric variables created a rather singular result:</p>
+<pre class="r"><code>x &lt;- as.factor(c(&#39;Positive&#39;,&#39;Negative&#39;,&#39;Indeterminate&#39;))
+x1 &lt;- ifelse(x==&#39;Indeterminate&#39;, NA, x)
+str(x1)</code></pre>
+<pre><code>##  int [1:3] 3 2 NA</code></pre>
+<p>This process converted it to an integer!! Not the end of the world, but not ideal by any means.</p>
+<p>Further investigation revealed two other <code>tidyverse</code> strategies.</p>
+<div id="dplyrna_if" class="section level3">
+<h3><code>dplyr::na_if</code></h3>
+<p>This method changes the values to NA, but keeps the original level in the factor’s levels</p>
+<pre class="r"><code>x2 &lt;- dplyr::na_if(x, &#39;Indeterminate&#39;)
+str(x2)</code></pre>
+<pre><code>##  Factor w/ 3 levels &quot;Indeterminate&quot;,..: 3 2 NA</code></pre>
+<pre class="r"><code>x2</code></pre>
+<pre><code>## [1] Positive Negative &lt;NA&gt;    
+## Levels: Indeterminate Negative Positive</code></pre>
+</div>
+<div id="dplyrrecode" class="section level3">
+<h3><code>dplyr::recode</code></h3>
+<p>This method drops the level that I’m deeming to be missing from the factor</p>
+<pre class="r"><code>x3 &lt;- dplyr::recode(x, Indeterminate = NA_character_)
+str(x3)</code></pre>
+<pre><code>##  Factor w/ 2 levels &quot;Negative&quot;,&quot;Positive&quot;: 2 1 NA</code></pre>
+<pre class="r"><code>x3</code></pre>
+<pre><code>## [1] Positive Negative &lt;NA&gt;    
+## Levels: Negative Positive</code></pre>
+<p>This method can also work more generally to change all values not listed to missing values.</p>
+<pre class="r"><code>x4 &lt;- dplyr::recode(x, Positive=&#39;Positive&#39;, Negative=&#39;Negative&#39;, 
+                    .default=NA_character_)
+x4</code></pre>
+<pre><code>## [1] Positive Negative &lt;NA&gt;    
+## Levels: Negative Positive</code></pre>
+<p>Other strategies are welcome in the comments.</p>
+</div>
+</div>
